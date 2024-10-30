@@ -4,14 +4,16 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 const ChangePasswordModal = ({ onClose, onSubmit, userDetails }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const {
     handleSubmit,
     control,
     formState: { errors },
     setValue,
+    watch,
   } = useForm();
-
+  const newPasswordValue = watch("newPassword");
   useEffect(() => {
     if (userDetails) {
       setValue("email", userDetails.email);
@@ -127,6 +129,47 @@ const ChangePasswordModal = ({ onClose, onSubmit, userDetails }) => {
             {errors.newPassword && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.newPassword.message}
+              </p>
+            )}
+          </div>
+          {/* Confirm Password Field */}
+          <div className="flex flex-col relative">
+            <label className="text-gray-700 font-semibold mb-2">
+              Confirm Password
+            </label>
+            <Controller
+              name="confirmPassword"
+              control={control}
+              rules={{
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === newPasswordValue || "Passwords do not match",
+              }}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type={showConfirmPassword ? "text" : "password"}
+                  className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Re-enter your new password"
+                />
+              )}
+            />
+            <span
+              className={`${
+                errors.confirmPassword
+                  ? errors.confirmPassword.message ===
+                    "Password must contain at least one uppercase letter and one special character"
+                    ? "top-[-17%]"
+                    : "top-[-3%]"
+                  : "top-[35%]"
+              } absolute inset-y-0 right-0  pr-3 flex items-center cursor-pointer`}
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? <FaRegEye /> : <FaRegEyeSlash />}
+            </span>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.confirmPassword.message}
               </p>
             )}
           </div>

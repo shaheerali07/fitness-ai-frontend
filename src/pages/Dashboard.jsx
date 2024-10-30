@@ -90,6 +90,7 @@ function Dashboard() {
   // };
 
   const handleChangePassword = (data) => {
+    delete data.confirmPassword;
     const updateData = {
       ...data,
     };
