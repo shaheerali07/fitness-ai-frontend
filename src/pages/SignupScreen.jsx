@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import PuffLoader from "react-spinners/PuffLoader";
 import toastr from "toastr";
 import api from "../service/axios";
 import { loginUser } from "../utils/auth";
@@ -9,6 +10,7 @@ import { loginUser } from "../utils/auth";
 const SignupScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -18,6 +20,7 @@ const SignupScreen = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    setLoading(true);
     const payload = {
       email: data.email,
       password: data.password,
@@ -32,6 +35,7 @@ const SignupScreen = () => {
 
       const newData = res.data;
       if (newData.message === "success") {
+        setLoading(false);
         toastr.success("Signup successful, welcome to fitness!");
         // Optionally log the user in after signup
         await loginUser({
@@ -41,10 +45,12 @@ const SignupScreen = () => {
         });
         // Redirect to dashboard
       } else {
-        console.log(newData);
+        setLoading(false);
+
         toastr.error("Signup failed, please try again.");
       }
     } catch (err) {
+      setLoading(false);
       console.error("Error during signup: ", err);
       toastr.error(
         err?.response?.data?.message ??
@@ -214,10 +220,11 @@ const SignupScreen = () => {
           </div>
           {/* Signup Button */}
           <button
+            disabled={loading}
             type="submit"
             className="w-full bg-black text-white p-3 rounded mb-4 hover:bg-gray-800 transition"
           >
-            Create Account
+            {loading ? <PuffLoader size={20} color={"#fff"} /> : "Sign Up"}
           </button>
         </form>
       </div>

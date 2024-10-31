@@ -4,6 +4,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import toastr from "toastr";
 import * as yup from "yup";
 
+import PuffLoader from "react-spinners/PuffLoader";
 import api from "../../service/axios";
 import ActivityLevel from "./components/ActivityLevel";
 import BasicInfo from "./components/BasicInfo";
@@ -12,6 +13,7 @@ import FitnessGoals from "./components/FitnessGoals";
 import HealthInfo from "./components/HealthInfo";
 import StepperComponent from "./components/Stepper";
 const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
+  const [loading, setLoading] = useState(false);
   const schema = yup.object().shape({
     profilePicture: yup.string(),
     gender: yup.string().required("Gender is required"),
@@ -126,6 +128,7 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
   };
 
   const onSubmit = (data) => {
+    setLoading(true);
     // API call to update user
     const updateData = {
       ...data,
@@ -134,14 +137,17 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
       .post("/admin/signupUpdate", { updateData })
       .then((res) => {
         if (res.data.message === "success") {
+          setLoading(false);
           toastr.success("User updated successfully!");
           setShowModal(false); // Close the modal after successful submission
           fetchUserByEmail();
         } else {
+          setLoading(false);
           toastr.error("Failed to update user.");
         }
       })
       .catch((err) => {
+        setLoading(false);
         toastr.error("An error occurred while updating.");
         toastr.error(
           err?.response?.data?.message ??
@@ -181,8 +187,12 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
               </button>
             )}
             {step === 4 && (
-              <button type="submit" className="btn btn-success">
-                Complete
+              <button
+                disabled={loading}
+                type="submit"
+                className="btn btn-success"
+              >
+                {loading ? <PuffLoader size={20} color={"#fff"} /> : "Save"}
               </button>
             )}
           </div>

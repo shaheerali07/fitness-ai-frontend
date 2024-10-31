@@ -4,12 +4,14 @@ import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 import { useLocation } from "react-router-dom";
+import PuffLoader from "react-spinners/PuffLoader";
 import toastr from "toastr";
 import api from "../service/axios";
 
 const ResetPasswordScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const email = queryParams.get("email");
@@ -20,6 +22,7 @@ const ResetPasswordScreen = () => {
     watch,
   } = useForm();
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
       const res = await api.post("/admin/resetPassword", {
         newPassword: data.newPassword,
@@ -27,13 +30,16 @@ const ResetPasswordScreen = () => {
       });
 
       if (res.status === 200) {
+        setLoading(false);
         toastr.success("Password reset successfully!");
         window.location.replace("/login"); // Optionally, navigate the user to the login page after resetting password
         // Optionally, navigate the user to the login page after resetting password
       } else {
+        setLoading(false);
         toastr.error("Password reset failed. Please try again.");
       }
     } catch (err) {
+      setLoading(false);
       console.error("Error during password reset: ", err);
       toastr.error(
         err?.response?.data?.message ??
@@ -139,10 +145,15 @@ const ResetPasswordScreen = () => {
 
           {/* Submit Button */}
           <button
+            disabled={loading}
             type="submit"
             className="w-full bg-black text-white p-3 rounded mb-4 hover:bg-gray-800 transition"
           >
-            Reset Password
+            {loading ? (
+              <PuffLoader size={20} color={"#fff"} />
+            ) : (
+              "Reset Password"
+            )}
           </button>
         </form>
       </div>

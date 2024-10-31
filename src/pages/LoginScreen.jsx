@@ -2,11 +2,13 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import PuffLoader from "react-spinners/PuffLoader";
 import toastr from "toastr";
 import api from "../service/axios";
 import { loginUser } from "../utils/auth";
 const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const {
     register,
@@ -14,6 +16,7 @@ const LoginScreen = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
       const res = await api.get("/admin/signin", {
         params: { email: data.email, password: data.password },
@@ -21,6 +24,7 @@ const LoginScreen = () => {
 
       const newData = res.data;
       if (newData.message === "success") {
+        setLoading(false);
         setError(false);
         // First log in the user, then navigate
         await loginUser({
@@ -30,10 +34,12 @@ const LoginScreen = () => {
           token: newData.token,
         });
       } else {
+        setLoading(false);
         setError(true);
         toastr.error("Email or password is not correct");
       }
     } catch (err) {
+      setLoading(false);
       toastr.error(
         err?.response?.data?.message ??
           "Something went wrong. Please try again."
@@ -130,10 +136,11 @@ const LoginScreen = () => {
 
           {/* Buttons */}
           <button
+            disabled={loading}
             type="submit"
             className="w-full bg-black text-white p-3 rounded mb-4 hover:bg-gray-800 transition"
           >
-            Login
+            {loading ? <PuffLoader size={20} color={"#fff"} /> : "Log In"}
           </button>
           <div className="flex items-start justify-start gap-1">
             Forgot password?
