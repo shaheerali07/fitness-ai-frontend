@@ -86,7 +86,7 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
     exerciseLimitations: "",
     medicationDetail: "",
     exerciseLimitationsDetail: "",
-    agreeTerms: true,
+    agreeTerms: false,
     // receiveEmails: true,
     username: "", // Add username as an empty string for default
     email: "",
@@ -124,7 +124,7 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
         medicationDetail: userDetails.medicationDetail,
         exerciseLimitationsDetail: userDetails.exerciseLimitationsDetail,
         conditionsDetail: userDetails.conditionsDetail,
-        agreeTerms: userDetails.agreeTerms || true,
+        agreeTerms: userDetails.agreeTerms || false,
         // receiveEmails: userDetails.receiveEmails,
         username: userDetails.username, // Update with userDetails
         email: userDetails.email, // Update with userDetails
