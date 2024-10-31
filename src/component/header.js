@@ -29,26 +29,6 @@ function Header({
       setAvatarName(name);
       return;
     }
-    // const localEmail = localStorage.getItem("fitnessemail");
-    // const localPassword = localStorage.getItem("fitnesspassword");
-    // api
-    //   .get("/admin/signin", {
-    //     params: { email: localEmail, password: localPassword },
-    //   })
-    //   .then((res) => {
-    //     const newData = res.data;
-    //     if (newData.message === "success") {
-    //       const name = newData.name;
-    //       setAvatarSrc(newData.profilePic);
-    //       setEmail(localEmail);
-    //       setAvatarName(name);
-    //       if (!loginstate) toastr.success("Welcome to fitness");
-    //       loginstate = true;
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log("err: ", err);
-    //   });
   }, [userDetails]);
   return (
     <>
