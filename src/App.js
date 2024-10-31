@@ -1,4 +1,5 @@
 // src/App.js
+import { Analytics } from "@vercel/analytics/react";
 import React, { useEffect, useState } from "react";
 import {
   Navigate,
@@ -15,7 +16,6 @@ import ResetPasswordScreen from "./pages/ResetPasswordScreen";
 import SignupScreen from "./pages/SignupScreen";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import { isAuthenticated } from "./utils/auth";
-
 function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -34,55 +34,58 @@ function App() {
     return <div>Loading...</div>;
   }
   return (
-    <Router>
-      <Routes>
-        {/* Redirect to login if not authenticated */}
-        <Route
-          path="/"
-          element={
-            isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
-          }
-        />
+    <>
+      <Analytics />
+      <Router>
+        <Routes>
+          {/* Redirect to login if not authenticated */}
+          <Route
+            path="/"
+            element={
+              isAuth ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+            }
+          />
 
-        {/* Login route */}
-        <Route
-          path="/login"
-          element={isAuth ? <Navigate to="/dashboard" /> : <LoginScreen />}
-        />
+          {/* Login route */}
+          <Route
+            path="/login"
+            element={isAuth ? <Navigate to="/dashboard" /> : <LoginScreen />}
+          />
 
-        {/* Signup route */}
-        <Route
-          path="/signup"
-          element={isAuth ? <Navigate to="/dashboard" /> : <SignupScreen />}
-        />
+          {/* Signup route */}
+          <Route
+            path="/signup"
+            element={isAuth ? <Navigate to="/dashboard" /> : <SignupScreen />}
+          />
 
-        {/* Forgot password route */}
-        <Route
-          path="/forgot-password"
-          element={
-            isAuth ? <Navigate to="/dashboard" /> : <ForgotPasswordScreen />
-          }
-        />
-        {/* Reset password route */}
-        <Route
-          path="/reset-password"
-          element={
-            isAuth ? <Navigate to="/dashboard" /> : <ResetPasswordScreen />
-          }
-        />
+          {/* Forgot password route */}
+          <Route
+            path="/forgot-password"
+            element={
+              isAuth ? <Navigate to="/dashboard" /> : <ForgotPasswordScreen />
+            }
+          />
+          {/* Reset password route */}
+          <Route
+            path="/reset-password"
+            element={
+              isAuth ? <Navigate to="/dashboard" /> : <ResetPasswordScreen />
+            }
+          />
 
-        {/* Protected dashboard route */}
-        <Route
-          path="/dashboard"
-          element={isAuth ? <Dashboard /> : <Navigate to="/login" />}
-        />
+          {/* Protected dashboard route */}
+          <Route
+            path="/dashboard"
+            element={isAuth ? <Dashboard /> : <Navigate to="/login" />}
+          />
 
-        <Route
-          path="/conditions"
-          element={isAuth ? <TermsAndConditions /> : <Navigate to="/login" />}
-        />
-      </Routes>
-    </Router>
+          <Route
+            path="/conditions"
+            element={isAuth ? <TermsAndConditions /> : <Navigate to="/login" />}
+          />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
