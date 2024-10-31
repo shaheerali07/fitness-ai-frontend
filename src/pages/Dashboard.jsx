@@ -37,6 +37,7 @@ function Dashboard() {
         } else {
           setLoading(false);
           toastr.error("Email or password is not correct.");
+          window.location.replace("/login");
         }
       })
       .catch((err) => {
