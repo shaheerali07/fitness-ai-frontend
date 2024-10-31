@@ -15,7 +15,10 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
   const schema = yup.object().shape({
     profilePicture: yup.string(),
     gender: yup.string().required("Gender is required"),
-    dob: yup.date().required("Date of Birth is required"),
+    dob: yup
+      .date()
+      .required("Date of Birth is required")
+      .typeError("Date of Birth is required"),
     height: yup.number().required("Height is required").positive(),
     heightUnit: yup.string().required("Height unit is required"),
     weight: yup.number().required("Weight is required").positive(),
@@ -72,8 +75,10 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
 
   const methods = useForm({
     resolver: yupResolver(schema),
+    mode: "onChange",
     defaultValues,
   });
+
   useEffect(() => {
     if (userDetails) {
       console.log(userDetails);
@@ -110,11 +115,13 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
   }, [userDetails, methods]);
   const [step, setStep] = useState(0);
 
-  const onNext = () => {
+  const onNext = async () => {
+    await methods.trigger(); // Triggers validation for all fields
     setStep((prevStep) => prevStep + 1);
   };
 
-  const onBack = () => {
+  const onBack = async () => {
+    await methods.trigger(); // Triggers validation for all fields
     setStep((prevStep) => (prevStep > 0 ? prevStep - 1 : prevStep));
   };
 

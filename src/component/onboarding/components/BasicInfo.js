@@ -3,7 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { Tooltip } from "react-tooltip";
 
 const BasicInfo = () => {
-  const { control, register, setValue, getValues } = useFormContext();
+  const { control, setValue, getValues } = useFormContext();
   const [imagePreview, setImagePreview] = useState(null);
 
   const profilePicture = getValues("profilePicture");
@@ -79,7 +79,11 @@ const BasicInfo = () => {
                     {...field}
                     placeholder="Enter your name"
                   />
-                  {fieldState.error && <p>{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </>
               )}
             />
@@ -98,7 +102,11 @@ const BasicInfo = () => {
                     type="email"
                     placeholder="Enter your email"
                   />
-                  {fieldState.error && <p>{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </>
               )}
             />
@@ -114,11 +122,16 @@ const BasicInfo = () => {
                     {...field}
                     className=" w-full border border-gray-300 h-9 pl-2 rounded  focus:outline-none focus:border-blue-500"
                   >
+                    <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
-                  {fieldState.error && <p>{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </>
               )}
             />
@@ -137,7 +150,11 @@ const BasicInfo = () => {
                     className=" w-full pl-2 pr-2 border border-gray-300 h-9 rounded focus:outline-none focus:border-blue-500"
                     type="date"
                   />
-                  {fieldState.error && <p>{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </>
               )}
             />
@@ -189,7 +206,11 @@ const BasicInfo = () => {
                     type="number"
                     placeholder="Enter height"
                   />
-                  {fieldState.error && <p>{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </>
               )}
             />
@@ -238,7 +259,11 @@ const BasicInfo = () => {
                     {...field}
                     placeholder="Weight (kg/lbs)"
                   />
-                  {fieldState.error && <p>{fieldState.error.message}</p>}
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm">
+                      {fieldState.error.message}
+                    </p>
+                  )}
                 </>
               )}
             />

@@ -97,6 +97,12 @@ const ForgotPasswordScreen = () => {
               "Send Reset Link"
             )}
           </button>
+          <span className=" !text-black !block !text-center !font-body">
+            Back to{" "}
+            <a href="/login" className="!text-primary-100 !underline">
+              Log In
+            </a>
+          </span>
         </form>
       </div>
     </div>

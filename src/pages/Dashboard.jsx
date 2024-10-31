@@ -1,29 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { IoMdCloseCircleOutline } from "react-icons/io";
 import toastr from "toastr";
-import * as yup from "yup";
 import ChangePasswordModal from "../component/changePassword/changePassword";
 import MainBox from "../component/mainbox";
 import Onboarding from "../component/onboarding/onboarding";
 import SideBar from "../component/sidebar";
 import api from "../service/axios";
-
-// Validation schema using yup
-const schema = yup.object().shape({
-  height: yup
-    .number()
-    .required("Height is required")
-    .positive("Height must be a positive number")
-    .typeError("Height must be a valid number"),
-  weight: yup
-    .number()
-    .required("Weight is required")
-    .positive("Weight must be a positive number"),
-  fitnessGoal: yup.string().required("Fitness goal is required"),
-  goalWeight: yup
-    .number()
-    .required("Goal weight is required")
-    .positive("Goal weight must be a positive number"),
-});
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -131,7 +113,19 @@ function Dashboard() {
       {/* Modal for onboarding */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg w-[80%] h-[90%] overflow-scroll">
+          <div className="bg-white p-6 rounded-lg w-[80%] h-[90%] overflow-scroll relative">
+            {user && user.fitnessGoal && (
+              <button
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                onClick={() => {
+                  setShowModal(false);
+                  fetchUserByEmail();
+                }}
+              >
+                <IoMdCloseCircleOutline size={24} />
+              </button>
+            )}
+
             <h2 className="text-2xl font-bold mb-2">
               Complete Your Onboarding
             </h2>
