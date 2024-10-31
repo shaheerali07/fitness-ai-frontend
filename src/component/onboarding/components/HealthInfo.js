@@ -21,7 +21,7 @@ const HealthInfo = () => {
           <Controller
             name="medicalConditions"
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <>
                 <label className="inline-flex items-center">
                   <input
@@ -41,6 +41,11 @@ const HealthInfo = () => {
                   />
                   <span className="ml-2">No</span>
                 </label>
+                {fieldState.error && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </>
             )}
           />
@@ -72,7 +77,7 @@ const HealthInfo = () => {
           <Controller
             name="medication"
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <>
                 <label className="inline-flex items-center">
                   <input
@@ -92,6 +97,11 @@ const HealthInfo = () => {
                   />
                   <span className="ml-2">No</span>
                 </label>
+                {fieldState.error && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </>
             )}
           />
@@ -124,7 +134,7 @@ const HealthInfo = () => {
           <Controller
             name="exerciseLimitations"
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <>
                 <label className="inline-flex items-center">
                   <input
@@ -144,6 +154,11 @@ const HealthInfo = () => {
                   />
                   <span className="ml-2">No</span>
                 </label>
+                {fieldState.error && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </>
             )}
           />

@@ -18,7 +18,7 @@ const DietaryPreferences = () => {
           <Controller
             name="dietaryPreferences"
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <>
                 <div>
                   <label className="inline-flex items-center">
@@ -124,6 +124,11 @@ const DietaryPreferences = () => {
                     <span className="ml-2">No specific preference</span>
                   </label>
                 </div>
+                {fieldState.error && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {fieldState.error.message}
+                  </p>
+                )}
               </>
             )}
           />

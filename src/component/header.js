@@ -35,7 +35,7 @@ function Header({
   useEffect(() => {
     if (userDetails) {
       const name = userDetails.username;
-      setAvatarSrc(userDetails.profilePicture);
+      setAvatarSrc(userDetails.profilePicture || "user.png");
       setEmail(userDetails.email);
       setAvatarName(name);
       return;
@@ -76,6 +76,7 @@ function Header({
             {/* Make this div relative */}
             <div className="flex flex-col items-center justify-center gap-[0px]">
               <button
+                className="mt-2"
                 onClick={(e) => {
                   showWidget === true
                     ? setShowWidget(false)
@@ -83,9 +84,12 @@ function Header({
                 }}
               >
                 <img
-                  className="rounded-full mt-[0.5rem]"
+                  className="rounded-full mt-2 border-2 border-[#5534A5] cursor-pointer"
                   src={avatarSrc}
-                  width="80px"
+                  alt="avatar"
+                  width="50px"
+                  height={"50px"}
+                  style={{ marginTop: "10px" }}
                 />
               </button>
               <p

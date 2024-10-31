@@ -21,12 +21,23 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
       .date()
       .required("Date of Birth is required")
       .typeError("Date of Birth is required"),
-    height: yup.number().required("Height is required").positive(),
+    height: yup
+      .number()
+      .required("Height is required")
+      .positive()
+      .typeError("Height is required"),
     heightUnit: yup.string().required("Height unit is required"),
-    weight: yup.number().required("Weight is required").positive(),
+    weight: yup
+      .number()
+      .required("Weight is required")
+      .positive()
+      .typeError("Weight is required"),
     weightUnit: yup.string().required("Weight unit is required"),
     fitnessGoal: yup.string().required("Fitness Goal is required"),
-    targetWeight: yup.number().positive(),
+    targetWeight: yup
+      .number()
+      .positive()
+      .typeError("Target weight is required"),
     activityLevel: yup.string().required("Activity level is required"),
     exerciseDays: yup
       .number()
@@ -34,14 +45,20 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
       .positive()
       .integer(),
     workoutDuration: yup.string().required("Workout duration is required"),
-    dietaryPreferences: yup.array().of(yup.string()),
+    dietaryPreferences: yup
+      .array()
+      .of(yup.string())
+      .required("Dietary preferences are required"),
     calorieIntake: yup
       .number()
       .required("Calorie intake is required")
-      .positive(),
-    medicalConditions: yup.string(),
-    medication: yup.string().required(),
-    exerciseLimitations: yup.string().required(),
+      .positive()
+      .typeError("Calorie intake is required"),
+    medicalConditions: yup.string().required("Medical conditions are required"),
+    medication: yup.string().required("Medication is required"),
+    exerciseLimitations: yup
+      .string()
+      .required("Exercise limitations are required"),
     medicationDetail: yup.string(),
     exerciseLimitationsDetail: yup.string(),
     agreeTerms: yup.boolean(),
@@ -60,8 +77,8 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
     fitnessGoal: "",
     targetWeight: 0,
     activityLevel: "",
-    exerciseDays: 0,
-    workoutDuration: "",
+    exerciseDays: 1,
+    workoutDuration: "10 mins",
     dietaryPreferences: [],
     calorieIntake: 0,
     medicalConditions: "",
@@ -83,7 +100,6 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
 
   useEffect(() => {
     if (userDetails) {
-      console.log(userDetails);
       const formattedDob = userDetails.dob
         ? new Date(userDetails.dob).toISOString().split("T")[0]
         : "";
@@ -98,17 +114,17 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
         fitnessGoal: userDetails.fitnessGoal,
         targetWeight: userDetails.targetWeight,
         activityLevel: userDetails.activityLevel,
-        exerciseDays: userDetails.exerciseDays,
-        workoutDuration: userDetails.workoutDuration,
+        exerciseDays: userDetails.exerciseDays || 2,
+        workoutDuration: userDetails.workoutDuration || "10 mins",
         dietaryPreferences: userDetails.dietaryPreferences,
-        calorieIntake: userDetails.calorieIntake,
+        calorieIntake: userDetails.calorieIntake || 0,
         medicalConditions: userDetails.medicalConditions,
         medication: userDetails.medication,
         exerciseLimitations: userDetails.exerciseLimitations,
         medicationDetail: userDetails.medicationDetail,
         exerciseLimitationsDetail: userDetails.exerciseLimitationsDetail,
         conditionsDetail: userDetails.conditionsDetail,
-        agreeTerms: userDetails.agreeTerms,
+        agreeTerms: userDetails.agreeTerms || true,
         // receiveEmails: userDetails.receiveEmails,
         username: userDetails.username, // Update with userDetails
         email: userDetails.email, // Update with userDetails
@@ -117,17 +133,64 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
   }, [userDetails, methods]);
   const [step, setStep] = useState(0);
 
+  const validateStep = async (step) => {
+    const values = methods.getValues();
+    let requiredFields = [];
+
+    switch (step) {
+      case 0:
+        requiredFields = [
+          "gender",
+          "dob",
+          "height",
+          "heightUnit",
+          "weight",
+          "weightUnit",
+        ];
+        break;
+      case 1:
+        requiredFields = ["fitnessGoal"];
+        break;
+      case 2:
+        requiredFields = ["activityLevel"];
+        break;
+      case 3:
+        requiredFields = ["dietaryPreferences", "calorieIntake"];
+        break;
+      default:
+        return true;
+    }
+
+    const isValid = requiredFields.every((field) => {
+      const value = values[field];
+      return Array.isArray(value) ? value.length > 0 : !!value;
+    });
+
+    if (!isValid) {
+      await methods.trigger(); // Triggers validation for all fields
+      toastr.error("Please fill all the required fields.");
+    }
+
+    return isValid;
+  };
+
   const onNext = async () => {
-    await methods.trigger(); // Triggers validation for all fields
+    const isValid = await validateStep(step);
+    if (!isValid) return;
+
+    methods.clearErrors();
     setStep((prevStep) => prevStep + 1);
   };
 
   const onBack = async () => {
-    await methods.trigger(); // Triggers validation for all fields
     setStep((prevStep) => (prevStep > 0 ? prevStep - 1 : prevStep));
   };
 
   const onSubmit = (data) => {
+    if (data.agreeTerms === false) {
+      toastr.error("Please agree to the terms and conditions.");
+      return;
+    }
     setLoading(true);
     // API call to update user
     const updateData = {
