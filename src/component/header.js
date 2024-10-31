@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 function Header({
   sideBarIndex,
   headerContent,
@@ -18,25 +17,15 @@ function Header({
     "Support",
   ];
 
-  const signInBtn = useRef(null);
-  const navigate = useNavigate();
-
   const [showWidget, setShowWidget] = useState(false);
   const [avatarSrc, setAvatarSrc] = useState("user.png");
   const [avatarName, setAvatarName] = useState("Log in");
-  const [email, setEmail] = useState("");
 
-  const handeKeyPress = (event) => {
-    if (event.key === "Enter") {
-      signInBtn.current.click();
-    }
-  };
   // let loginstate = false;
   useEffect(() => {
     if (userDetails) {
       const name = userDetails.username;
       setAvatarSrc(userDetails.profilePicture || "user.png");
-      setEmail(userDetails.email);
       setAvatarName(name);
       return;
     }
