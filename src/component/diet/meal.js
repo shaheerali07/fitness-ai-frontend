@@ -34,7 +34,7 @@ function Meal({
   const [updateSignal, setUpdateSignal] = useState(0);
 
   const calc_kcal = (food) => {
-    return String(kcals[foodNames.indexOf(food)]);
+    return String(parseInt(kcals[foodNames.indexOf(food)]));
   };
   const calc_protein = (food) => {
     return String(proteins[foodNames.indexOf(food)]);
@@ -76,10 +76,10 @@ function Meal({
   useEffect(() => {
     const foodIndex = foodNames.indexOf(addFood);
     if (foodIndex === -1) return;
-    setExpectKcal((kcals[foodIndex] * addAmount) / 100);
-    setExpectProtein((proteins[foodIndex] * addAmount) / 100);
-    setExpectWater((waters[foodIndex] * addAmount) / 100);
-    setExpectMineral((mineral[foodIndex] * addAmount) / 100);
+    setExpectKcal(parseInt((kcals[foodIndex] * addAmount) / 100, 10));
+    setExpectProtein(parseInt((proteins[foodIndex] * addAmount) / 100, 10));
+    setExpectWater(parseInt((waters[foodIndex] * addAmount) / 100, 10));
+    setExpectMineral(parseInt((mineral[foodIndex] * addAmount) / 100, 10));
   }, [addAmount]);
 
   useEffect(() => {

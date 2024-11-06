@@ -108,7 +108,9 @@ function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
               snack2: [],
             },
             dietMenu: {
-              foodName: result.dietMenu.foodName,
+              foodName: result.dietMenu.foodName.filter(
+                (el) => el !== "↓FoodName"
+              ),
               kcal: result.dietMenu.kcal,
               protein: result.dietMenu.protein,
               water: result.dietMenu.water,
@@ -119,7 +121,6 @@ function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
         }
       });
   }, [dietPlan.day]);
-
   return (
     <div className="border rounded-xl w-[100%] pb-[20px] mt-[2%] md:mt-[0px]">
       <DietCalendar

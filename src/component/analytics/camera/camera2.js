@@ -83,7 +83,6 @@ function Camera2({
     const landmark = results.poseLandmarks;
     if (landmark) {
       let state_pose = true;
-      console.log(landmark);
       for (let i = 0; i < 33; i++) {
         if (
           landmark[i].x > 1 ||
@@ -108,9 +107,8 @@ function Camera2({
   };
 
   const userPose = new Pose({
-    locateFile: (file) => {
-      if (file) return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-    },
+    locateFile: (file) =>
+      `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
   });
 
   userPose.setOptions({

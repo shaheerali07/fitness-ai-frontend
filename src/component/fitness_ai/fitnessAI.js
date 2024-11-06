@@ -1,9 +1,9 @@
-// In your FitnessAIChatbot component
 import { Howl } from "howler";
 import parse from "html-react-parser";
 import React, { useEffect, useRef, useState } from "react";
 import PuffLoader from "react-spinners/PuffLoader";
 import api from "../../service/axios";
+
 function FitnessAIChatbot() {
   const [messages, setMessages] = useState([
     {
@@ -11,13 +11,14 @@ function FitnessAIChatbot() {
       sender: "agent",
     },
   ]);
-  // Initialize sound using Howl from howler.js
+
   const notificationSound = new Howl({
     src: [
-      "https://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a",
-    ], // URL to a sound
-    volume: 0.5,
+      // "https://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a",
+      "/sounds/alert.wav",
+    ],
   });
+
   const email = localStorage.getItem("fitnessemail");
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
@@ -37,18 +38,26 @@ function FitnessAIChatbot() {
       setMessages([...messages, { text: input, sender: "user" }]);
       setInput("");
 
+      const question =
+        input === "Suggest me diet plans"
+          ? "Suggest me diet plans according my fitness goal, height, weight etc. and for whole week"
+          : input === "Suggest me exercise plans"
+          ? "Suggest me exercise plans according my fitness goal, height, weight etc. and for whole week"
+          : input;
+
       api
         .get(
-          `/chatbot/askMe?question=${encodeURIComponent(input)}&email=${email}`
+          `/chatbot/askMe?question=${encodeURIComponent(
+            question
+          )}&email=${encodeURIComponent(email)}`
         )
         .then((res) => {
           setLoading(false);
           if (res.data) {
             setMessages((prevMessages) => [
               ...prevMessages,
-              { text: res.data, sender: "agent" }, // Store raw HTML
+              { text: res.data, sender: "agent" },
             ]);
-            // Play notification sound when a response comes
             notificationSound.play();
           }
         })
@@ -58,11 +67,43 @@ function FitnessAIChatbot() {
         });
     }
   };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent the default action (like form submission)
+      e.preventDefault();
       handleSend();
     }
+  };
+
+  const handlePromptClick = (promptText) => {
+    setLoading(true);
+    setMessages([...messages, { text: promptText, sender: "user" }]);
+    const question =
+      promptText === "Suggest me diet plans"
+        ? "Suggest me diet plans according my fitness goal, height, weight etc. and for whole week"
+        : promptText === "Suggest me exercise plans"
+        ? "Suggest me exercise plans according my fitness goal, height, weight etc. and for whole week"
+        : promptText;
+    api
+      .get(
+        `/chatbot/askMe?question=${encodeURIComponent(
+          question
+        )}&email=${encodeURIComponent(email)}`
+      )
+      .then((res) => {
+        setLoading(false);
+        if (res.data) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { text: res.data, sender: "agent" },
+          ]);
+          notificationSound.play();
+        }
+      })
+      .catch((error) => {
+        setLoading(false);
+        console.error("Error calling the chatbot API:", error);
+      });
   };
 
   return (
@@ -81,19 +122,39 @@ function FitnessAIChatbot() {
             }`}
           >
             <div
-              className={` text-[17px] px-4 py-2  rounded-lg custom-container ${
+              className={`text-[17px] px-4 py-2 rounded-lg ${
                 message.sender === "user"
-                  ? "bg-blue-500 text-white text-right"
+                  ? "bg-[#5534a5] text-white text-right"
                   : "bg-gray-300 text-black text-left"
               }`}
-              // Use dangerouslySetInnerHTML to render the HTML content
-              // dangerouslySetInnerHTML={{ __html: parse(message.text) }}
             >
               {parse(message.text)}
             </div>
           </div>
         ))}
         <div ref={chatEndRef} />
+      </div>
+
+      {/* Predefined Prompts Section */}
+      <div className="p-4 flex space-x-2">
+        <button
+          onClick={() => handlePromptClick("Suggest me diet plans")}
+          style={{
+            border: "2px solid #5534a5",
+          }}
+          className="px-3 text-[17px] py-1  rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+        >
+          Suggest me diet plans
+        </button>
+        <button
+          style={{
+            border: "2px solid #5534a5",
+          }}
+          onClick={() => handlePromptClick("Suggest me exercise plans")}
+          className="px-3 text-[17px] py-1  rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+        >
+          Suggest me exercise plans
+        </button>
       </div>
 
       <div className="p-4 bg-gray-200 flex items-center">
@@ -109,7 +170,7 @@ function FitnessAIChatbot() {
         <button
           disabled={loading}
           onClick={handleSend}
-          className="ml-4 px-4 py-2 bg-blue-500 text-base text-white rounded-lg"
+          className="ml-4 px-4 py-2 bg-[#5534a5] text-base text-white rounded-lg"
         >
           {loading ? <PuffLoader size={20} color={"#fff"} /> : "Send"}
         </button>

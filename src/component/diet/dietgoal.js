@@ -156,19 +156,19 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
         <DietGoalPlan
           imgsrc="sumcarory.png"
           title="Weekly Total Calory"
-          content={String(weeklyTotalKcal) + " kcal"}
+          content={String(parseInt(weeklyTotalKcal)) + " kcal"}
         />
         <DietGoalPlan
           imgsrc="sum.png"
           title="Carory Comsumed Today"
-          content={String(dailyTotalKcal) + " kcal"}
+          content={String(parseInt(dailyTotalKcal)) + " kcal"}
         />
       </div>
       <div className="flex flex-col justify-center items-center w-[100%] h-[5px]  bg-red-300">
         <Progress
           className="w-[100%]"
           barClassName="my-progress"
-          value={(weeklyTotalKcal / targetKcal) * 100}
+          value={(parseInt(weeklyTotalKcal) / targetKcal) * 100}
         />
       </div>
     </>
