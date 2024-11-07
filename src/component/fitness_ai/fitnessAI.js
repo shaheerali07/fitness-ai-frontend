@@ -34,9 +34,11 @@ function FitnessAIChatbot() {
 
   useEffect(() => {
     const fetchUserChatHistory = async () => {
+      setLoading(true);
       try {
         const response = await api.get(`/chatbot/chatHistory?userId=${userId}`);
         if (response.data) {
+          setLoading(false);
           const chatHistory = response.data.messages.map((message) => {
             return {
               text: message.message,
@@ -51,6 +53,7 @@ function FitnessAIChatbot() {
           });
           setMessages(chatHistory);
         } else {
+          setLoading(false);
           setMessages([
             {
               text: "Hi there, how can I be of service for you today?",
@@ -60,6 +63,7 @@ function FitnessAIChatbot() {
           ]);
         }
       } catch (error) {
+        setLoading(false);
         setMessages([
           {
             text: "Hi there, how can I be of service for you today?",
