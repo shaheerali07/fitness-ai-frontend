@@ -32,6 +32,7 @@ const LoginScreen = () => {
           password: data.password,
           name: newData.name,
           token: newData.token,
+          id: newData.id,
         });
       } else {
         setLoading(false);
