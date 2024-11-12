@@ -108,9 +108,7 @@ function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
               snack2: [],
             },
             dietMenu: {
-              foodName: result.dietMenu.foodName.filter(
-                (el) => el !== "↓FoodName"
-              ),
+              foodName: result.dietMenu.foodName,
               kcal: result.dietMenu.kcal,
               protein: result.dietMenu.protein,
               water: result.dietMenu.water,

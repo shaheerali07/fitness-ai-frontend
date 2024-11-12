@@ -1,7 +1,7 @@
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import * as mediapipePose from "@mediapipe/pose";
 import { Pose } from "@mediapipe/pose";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { Progress } from "reactstrap";
 import { Analysis_exercise } from "../../function_set/analysis";
@@ -106,10 +106,14 @@ function Camera2({
     }
   };
 
-  const userPose = new Pose({
-    locateFile: (file) =>
-      `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-  });
+  const userPose = useMemo(
+    () =>
+      new Pose({
+        locateFile: (file) =>
+          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+      }),
+    []
+  );
 
   userPose.setOptions({
     modelComplexity: 1,
@@ -135,6 +139,7 @@ function Camera2({
       return () => {
         clearInterval(myInterval);
         clearInterval(myTime);
+
         const canvasElement = canvasRef.current;
         if (canvasElement && canvasElement.getContext("2d")) {
           const canvasCtx = canvasElement.getContext("2d");
@@ -176,10 +181,10 @@ function Camera2({
   useEffect(() => {
     userPose.onResults(onResults);
     poseRef.current = userPose;
-    return () => {
-      poseRef.current.close();
-    };
-  }, [state_change_exercise]);
+    // return () => {
+    //   poseRef.current.close();
+    // };
+  }, [state_change_exercise, onResults, userPose]);
 
   useEffect(() => {
     const new_data = { ...stateResultData, iswebcamEnable: iswebcamEnable };
