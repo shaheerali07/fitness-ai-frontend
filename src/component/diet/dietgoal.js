@@ -3,6 +3,7 @@ import { Progress } from "reactstrap";
 import api from "../../service/axios";
 import DietGoalEdit from "./dietgoaledit";
 import DietGoalPlan from "./dietgoalplan";
+
 function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
   const [dailyTotalKcal, setDailyTotalKcal] = useState(0);
   const [weeklyTotalKcal, setWeeklyTotalKcal] = useState(0);
@@ -112,6 +113,7 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
 
   useEffect(() => {
     if (dietCal === null) return;
+
     setDailyTotalKcal(calc_DailyTotalKcal(dietCal));
 
     const header = {
@@ -134,6 +136,9 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
           weeklytotalcal = weeklytotalcal + weeklyTotalCalcKcal(item._id);
         });
         setWeeklyTotalKcal(weeklytotalcal);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, [updateWeeklySignal, dietCal]);
 

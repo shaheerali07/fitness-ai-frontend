@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
+import PuffLoader from "react-spinners/PuffLoader";
 import api from "../../service/axios";
+
 function DietGoalEdit(props) {
   const [targetKcal, setTargetKcal] = useState(0);
   const [senderCheck, setSenderCheck] = useState(false);
+  const [loader, setLoader] = useState(true);
+
   const setSaveTargetKcal = () => {
     const header = {
       email: localStorage.getItem("fitnessemail"),
@@ -15,9 +19,14 @@ function DietGoalEdit(props) {
     api
       .post("/diet/settargetkcal", { header: header, updateData: updateData })
       .then((res) => {
+        setLoader(false);
         setSenderCheck(true);
         console.log("ok");
         props.setTargetKcal(targetKcal);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoader(false);
       });
   };
 
@@ -29,10 +38,15 @@ function DietGoalEdit(props) {
     api
       .get("/diet/gettargetkcal", { params: { header: header } })
       .then((res) => {
+        setLoader(false);
         if (res.data.message === "success") {
           setTargetKcal(res.data.result.targetKcal);
           props.setTargetKcal(res.data.result.targetKcal);
         }
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoader(false);
       });
   }, []);
 
@@ -60,10 +74,11 @@ function DietGoalEdit(props) {
             }}
           />
           <button
-            className="ml-3 z-10 text-[black] text-[15px] mt-[-1%] h-[38px] w-[40%] border rounded-md bg-[#F1EEF6] hover:bg-[#5534A5] hover:text-[white] duration-300 "
+            className="ml-3 z-10 text-[black] flex items-center justify-center text-[15px] mt-[-1%] h-[38px] w-[40%] border rounded-md bg-[#F1EEF6] hover:bg-[#5534A5] hover:text-[white] duration-300 "
             onClick={setSaveTargetKcal}
+            disabled={loader}
           >
-            save
+            {loader ? <PuffLoader size={20} /> : "Save"}
           </button>
           <div className="w-[10%] h-[38px]">
             {senderCheck && (
