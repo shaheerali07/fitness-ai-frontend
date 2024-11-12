@@ -1,7 +1,15 @@
+const getPoint = (landmarks, index) => {
+  if (landmarks && landmarks[index]) {
+    return landmarks[index];
+  } else {
+    console.error(`Landmark at index ${index} is undefined`);
+    return null;
+  }
+};
 export const Angle_3_point = (results, dot1, dot2, dot3) => {
-  const point1 = results.landmarks[dot1];
-  const point2 = results.landmarks[dot2];
-  const point3 = results.landmarks[dot3];
+  const point1 = getPoint(results.poseLandmarks, dot1);
+  const point2 = getPoint(results.poseLandmarks, dot2);
+  const point3 = getPoint(results.poseLandmarks, dot3);
 
   if (!point1 || !point2 || !point3) {
     return 0; // Return a default value or handle the error as needed
@@ -22,9 +30,9 @@ export const Angle_3_point = (results, dot1, dot2, dot3) => {
 };
 
 export const Angle_3d = (results, dot1, dot2, dot3) => {
-  const point1 = results.landmarks[dot1];
-  const point2 = results.landmarks[dot2];
-  const point3 = results.landmarks[dot3];
+  const point1 = getPoint(results.poseLandmarks, dot1);
+  const point2 = getPoint(results.poseLandmarks, dot2);
+  const point3 = getPoint(results.poseLandmarks, dot3);
 
   const vector1 = {
     x: point1.x - point2.x,

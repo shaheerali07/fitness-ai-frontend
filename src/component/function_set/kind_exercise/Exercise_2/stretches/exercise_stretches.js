@@ -23,7 +23,6 @@ export const abdominal_stretch = (calc_data) => {
   const landmark1 = config.index_landmark.left_knee;
   const landmark2 = config.index_landmark.left_hip;
   const landmark3 = config.index_landmark.nose;
-
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = 100 - ((angle_1 - 12) * 100) / 12;
   if (accuracy > 100) accuracy = 100;

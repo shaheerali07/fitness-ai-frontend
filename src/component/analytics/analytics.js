@@ -36,12 +36,6 @@ function Analytics() {
         exerciseResult={exerciseResult}
         setExerciseResult={setExerciseResult}
       ></Camera2>
-      {/* <Camera
-        setStateResultData={setStateResultData}
-        stateResultData={stateResultData}
-        exerciseResult={exerciseResult}
-        setExerciseResult={setExerciseResult}
-      ></Camera> */}
       <Result
         setStateResultData={setStateResultData}
         stateResultData={stateResultData}

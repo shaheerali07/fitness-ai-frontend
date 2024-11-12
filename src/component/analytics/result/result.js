@@ -3,6 +3,7 @@ import toastr from "toastr";
 import api from "../../../service/axios";
 import "./Result.css";
 import { kind_select } from "./select_kind_exercise";
+
 function Result({
   setStateResultData,
   stateResultData,
@@ -15,101 +16,143 @@ function Result({
   const [isSelectDisabled, setIsSelectDisabled] = useState(false);
   const [sampleVideoURL, setSampleVideo] = useState("");
   const [number_category, setNumberCategory] = useState("");
+  const [number_subcategory, setNumberSubcategory] = useState("");
   const [number_exercise, setNumberExercise] = useState("");
-  const [number_kind_index, setNumberKindIndex] = useState("");
   const [iswebcamEnable, setWebCamEnable] = useState(false);
-  const selectCategoryRef = useRef(null);
-  const selectExerciseRef = useRef(null);
-  const selectKindIndexRef = useRef(null);
 
-  const [se_kind_index, setKindIndex] = useState([]);
-  const [se_kind_category, setKindCategory] = useState([]);
-  const [se_kind_exercise, setKindExercise] = useState([]);
+  const selectCategoryRef = useRef(null);
+  const selectSubcategoryRef = useRef(null);
+  const selectExerciseRef = useRef(null);
+
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [exercises, setExercises] = useState([]);
 
   const setSaveExercise = (e) => {
-    if (exerciseResult.durtime === "") return;
-    if (exerciseResult.index === "") return;
+    if (!exerciseResult.durtime) return;
+    const selectedKind = kind_select.kinds.find(
+      (kind) => kind.category === number_category
+    );
+    exerciseResult.category = number_category;
+    exerciseResult.exercise = number_subcategory;
+    exerciseResult.index = selectedKind.index;
+    if (selectedKind.category === "GYM EXERCISES") {
+      exerciseResult.exercise = number_exercise;
+    }
     const header = {
       email: localStorage.getItem("fitnessemail"),
       password: localStorage.getItem("fitnesspassword"),
     };
-    const updateData = exerciseResult;
     api
-      .post("/exercise/setlogs", { header: header, updateData: updateData })
+      .post("/exercise/setlogs", { header, updateData: exerciseResult })
       .then((res) => {
         if (res.data.message === "success")
-          toastr.success("Save successfully!");
+          toastr.success("Saved successfully!");
       });
   };
   useEffect(() => {
-    const category = selectCategoryRef.current.value;
-    const exercise = selectExerciseRef.current.value;
-    const index = selectKindIndexRef.current.value;
-
-    if ((category !== "", exercise !== "", index !== "")) {
-      const json_exercsise = {
-        category: category,
-        exercise: exercise,
-        index: index,
-      };
-      const new_data = { ...stateResultData, kind_exercise: json_exercsise };
-      setStateResultData(new_data);
-      if (exercise !== "Select Exercise") {
-        api
-          .get("/video/video_load", {
-            params: { category: category, exercise: exercise, index: index },
-            responseType: "blob",
-          })
-          .then((res) => {
-            const blob = new Blob([res.data], { type: res.data.type });
-            setSampleVideo(URL.createObjectURL(blob));
-          })
-          .catch((err) => {});
-      }
-    }
-  }, [number_category, number_exercise, number_kind_index]);
-
-  useEffect(() => {
-    const category = selectCategoryRef.current.value;
-    const exercise = selectExerciseRef.current.value;
-    const index = selectKindIndexRef.current.value;
-
-    const json_exercsise = {
-      index: index,
-      category: category,
-      exercise: exercise,
-    };
-    if ((category !== "", exercise !== "", index !== "")) {
-      const new_data = { ...stateResultData, kind_exercise: json_exercsise };
-      setStateResultData(new_data);
-      if (exercise !== "Select Exercise") {
-        api
-          .get("/video/video_load", {
-            params: { category: category, exercise: exercise, index: index },
-            responseType: "blob",
-          })
-          .then((res) => {
-            const blob = new Blob([res.data], { type: res.data.type });
-            setSampleVideo(URL.createObjectURL(blob));
-          })
-          .catch((err) => {});
-      }
-    }
-  }, [se_kind_index, se_kind_category, se_kind_exercise]);
-
-  useEffect(() => {
     setVideoKey((prev) => prev + 1);
   }, [sampleVideoURL]);
-
+  useEffect(() => {
+    // Initialize categories on mount
+    setCategories(kind_select.kinds.map((kind) => kind.category));
+  }, []);
   useEffect(() => {
     setWebCamEnable(stateResultData.iswebcamEnable);
   }, [stateResultData.iswebcamEnable]);
+  useEffect(() => {
+    // Load subcategories based on the selected category
+    if (number_category) {
+      const selectedKind = kind_select.kinds.find(
+        (kind) => kind.category === number_category
+      );
+      if (selectedKind && typeof selectedKind.exercises === "object") {
+        if (selectedKind.category === "GYM EXERCISES") {
+          setSubcategories(Object.keys(selectedKind.exercises));
+          setExercises([]);
+          return;
+        }
+        setSubcategories(Object.values(selectedKind.exercises));
+        setExercises([]); // Reset exercises when category changes
+      }
+    }
+  }, [number_category]);
 
   useEffect(() => {
-    setKindIndex(kind_select.kind_index);
-    setKindCategory(kind_select.kind_category);
-    setKindExercise(kind_select.kind_exercise);
-  }, []);
+    // Load exercises based on the selected subcategory
+    if (number_category && number_subcategory) {
+      const selectedKind = kind_select.kinds.find(
+        (kind) => kind.category === number_category
+      );
+      if (selectedKind && selectedKind.exercises[number_subcategory]) {
+        setExercises(selectedKind.exercises[number_subcategory]);
+      }
+    }
+  }, [number_subcategory]);
+
+  useEffect(() => {
+    // Load video whenever category, subcategory, or exercise changes
+    if (number_category && number_subcategory) {
+      const selectedKind = kind_select.kinds.find(
+        (kind) => kind.category === number_category
+      );
+      if (selectedKind.category === "GYM EXERCISES") {
+        return;
+      }
+
+      let params = {
+        category: number_category,
+        exercise: number_subcategory,
+        index: selectedKind.index,
+      };
+
+      api
+        .get("/video/video_load", {
+          params: params,
+          responseType: "blob",
+        })
+        .then((res) => {
+          const blob = new Blob([res.data], { type: res.data.type });
+          setSampleVideo(URL.createObjectURL(blob));
+        })
+        .catch((err) => {
+          console.error("Failed to load video", err);
+        });
+    }
+  }, [number_category, number_subcategory]);
+  useEffect(() => {
+    // Load video whenever category, subcategory, or exercise changes
+    if (number_category && number_subcategory && number_exercise) {
+      const selectedKind = kind_select.kinds.find(
+        (kind) => kind.category === number_category
+      );
+      let params = {
+        category: number_category,
+        exercise: number_subcategory,
+        index: selectedKind.index,
+      };
+      if (selectedKind.category === "GYM EXERCISES") {
+        params = {
+          category: encodeURIComponent(number_category),
+          subcategory: encodeURIComponent(number_subcategory),
+          exercise: encodeURIComponent(number_exercise),
+          index: encodeURIComponent(selectedKind.index),
+        };
+      }
+      api
+        .get("/video/video_load", {
+          params: params,
+          responseType: "blob",
+        })
+        .then((res) => {
+          const blob = new Blob([res.data], { type: res.data.type });
+          setSampleVideo(URL.createObjectURL(blob));
+        })
+        .catch((err) => {
+          console.error("Failed to load video", err);
+        });
+    }
+  }, [number_category, number_subcategory, number_exercise]);
 
   return (
     <div
@@ -122,9 +165,9 @@ function Result({
       <div className="flex xl:flex-col justify-center items-center w-[80%] xl:h-[56%]">
         <video
           id="samplevideo"
-          className="w-[50%] xl:w-[100%] xl:ml-[0px] "
+          className="w-[50%] xl:w-[100%] xl:ml-[0px]"
           key={videokey}
-          autoPlay={true}
+          autoPlay
           controls
           width="80%"
           height="80%"
@@ -136,34 +179,39 @@ function Result({
         >
           <source src={sampleVideoURL} type="video/mp4"></source>
         </video>
-        <div
-          className="flex flex-col xl:flex-row justify-center items-center 
-                                w-[80%] h-[100%]
-                                xl:w-[100%]"
-        >
+        <div className="flex flex-col xl:flex-row justify-center items-center w-[80%] h-[100%] xl:w-[100%]">
           <button
             className="w-[90%] h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
             onClick={setSaveExercise}
           >
-            save
+            Save
           </button>
-
           <button
             className="w-[90%] h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
-            onClick={(e) => {
-              if (isSelectDisabled === true) setIsSelectDisabled(false);
-              else setIsSelectDisabled(true);
-
-              if (iswebcamEnable === true) {
-                if (stateResultData.btnStateStart === false) {
-                  setBtnName("Stop");
-                  const new_data = { ...stateResultData, btnStateStart: true };
-                  setStateResultData(new_data);
-                } else {
-                  const new_data = { ...stateResultData, btnStateStart: false };
-                  setStateResultData(new_data);
-                  setBtnName("Start");
+            onClick={() => {
+              if (iswebcamEnable) {
+                if (!number_subcategory) {
+                  alert("Please select Subcategory");
+                  return;
                 }
+                setIsSelectDisabled(!isSelectDisabled);
+                const selectedKind = kind_select.kinds.find(
+                  (kind) => kind.category === number_category
+                );
+                let new_data = {
+                  ...stateResultData,
+                  btnStateStart: !stateResultData.btnStateStart,
+                  kind_exercise: {
+                    index: selectedKind.index,
+                    category: number_category,
+                    exercise: number_subcategory,
+                  },
+                };
+                if (selectedKind.category === "GYM EXERCISES") {
+                  new_data.kind_exercise.exercise = number_exercise;
+                }
+                setStateResultData(new_data);
+                setBtnName(stateResultData.btnStateStart ? "Start" : "Stop");
               } else {
                 alert("Please Turn on Camera");
               }
@@ -174,56 +222,60 @@ function Result({
         </div>
       </div>
 
-      <select
-        ref={selectKindIndexRef}
-        disabled={isSelectDisabled}
-        className="form-control"
-        style={{
-          width: "80%",
-          marginTop: "2vw",
-        }}
-        onChange={(e) => {
-          setNumberKindIndex(e.target.value);
-        }}
-      >
-        {se_kind_index.map((item, index) => (
-          <option>{item}</option>
-        ))}
-      </select>
-
+      {/* Category Selection */}
       <select
         ref={selectCategoryRef}
         disabled={isSelectDisabled}
         className="form-control"
-        style={{
-          width: "80%",
-          marginTop: "2vw",
-        }}
+        style={{ width: "80%", marginTop: "2vw" }}
         onChange={(e) => {
           setNumberCategory(e.target.value);
+          setNumberSubcategory("");
         }}
       >
-        {se_kind_category.map((item, index) => (
-          <option>{item}</option>
+        <option>Select Category</option>
+        {categories.map((category, index) => (
+          <option key={index} value={category}>
+            {category}
+          </option>
         ))}
       </select>
 
-      <select
-        ref={selectExerciseRef}
-        disabled={isSelectDisabled}
-        className="form-control"
-        style={{
-          width: "80%",
-          marginTop: "2vw",
-        }}
-        onChange={(e) => {
-          setNumberExercise(e.target.value);
-        }}
-      >
-        {se_kind_exercise.map((item, index) => (
-          <option>{item}</option>
-        ))}
-      </select>
+      {/* Subcategory Selection */}
+      {subcategories.length > 0 && (
+        <select
+          ref={selectSubcategoryRef}
+          disabled={isSelectDisabled}
+          className="form-control"
+          style={{ width: "80%", marginTop: "2vw" }}
+          onChange={(e) => setNumberSubcategory(e.target.value)}
+        >
+          <option>Select Subcategory</option>
+          {subcategories.map((subcategory, index) => (
+            <option key={index} value={subcategory}>
+              {subcategory}
+            </option>
+          ))}
+        </select>
+      )}
+
+      {/* Exercise Selection */}
+      {Array.isArray(exercises) && exercises.length && (
+        <select
+          ref={selectExerciseRef}
+          disabled={isSelectDisabled}
+          className="form-control"
+          style={{ width: "80%", marginTop: "2vw" }}
+          onChange={(e) => setNumberExercise(e.target.value)}
+        >
+          <option>Select Exercise</option>
+          {exercises.map((exercise, index) => (
+            <option key={index} value={exercise}>
+              {exercise}
+            </option>
+          ))}
+        </select>
+      )}
     </div>
   );
 }
