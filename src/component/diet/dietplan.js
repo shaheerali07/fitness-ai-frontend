@@ -2,12 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../service/axios.js";
 import DietCalendar from "./dietcalendar.js";
 import DietDaily from "./dietdaily.js";
-function DietPlan({
-  setLoader,
-  setdietCal,
-  updateWeeklySignal,
-  setUpdateWeeklySignal,
-}) {
+function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
   const [btnEnable, setBtnEnable] = useState(false);
 
   const [dietPlan, setDietPlan] = useState({
@@ -66,7 +61,6 @@ function DietPlan({
         },
       })
       .then((res) => {
-        setLoader(false);
         setBtnEnable(false);
         const message = res.data.message;
         const result = res.data.result;
