@@ -4,7 +4,21 @@
 .body {
   background-color: #f0f0f0;
 }
-
+table {
+  font-size: 14px !important;
+}
+tr {
+  border-bottom: 1px solid #0b060692 !important;
+}
+td {
+  padding: 10px !important;
+}
+th {
+  padding: 10px !important;
+}
+th {
+  font-size: 16px !important;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

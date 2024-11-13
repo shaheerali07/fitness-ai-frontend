@@ -20,7 +20,7 @@ function FitnessAIChatbot() {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [message, setMessage] = useState(null);
   const [input, setInput] = useState("");
-  const [selectedWeek, setSelectedWeek] = useState("");
+  const [selectedWeek, setSelectedWeek] = useState("currentWeek");
   const chatEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -182,16 +182,44 @@ function FitnessAIChatbot() {
         console.error("Error calling the chatbot API:", error);
       });
   };
-  function generatePayloads(jsonData) {
+  function generatePayloads(jsonData, selectedWeek) {
     const email = localStorage.getItem("fitnessemail");
     const password = localStorage.getItem("fitnesspassword");
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
 
+    // Function to get start date of a week
+    const getStartOfWeek = (weekOffset) => {
+      const dayOfWeek = currentDate.getDay();
+      const currentMonday = new Date(currentDate);
+      currentMonday.setDate(
+        currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)
+      ); // Get the start of the current week
+      const startOfWeek = new Date(currentMonday);
+      startOfWeek.setDate(currentMonday.getDate() + 7 * weekOffset); // Adjust for the given week offset (0 = current, 1 = second, etc.)
+      return startOfWeek;
+    };
+
+    // Determine the start date based on the selected week
+    let startOfWeek;
+    switch (selectedWeek) {
+      case "secondWeek":
+        startOfWeek = getStartOfWeek(1); // Second week
+        break;
+      case "thirdWeek":
+        startOfWeek = getStartOfWeek(2); // Third week
+        break;
+      case "currentWeek":
+      default:
+        startOfWeek = getStartOfWeek(0); // Current week
+        break;
+    }
+
+    // Generate payloads for each day in the selected week
     return jsonData.dietPlan.map((dayData, index) => {
-      const date = new Date();
-      date.setDate(currentDate.getDate() + (index - currentDate.getDay() + 1)); // Set to each day's date in the week
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + index); // Adjust to the specific day in the week
 
       // Organize meal data
       const meal = {
@@ -304,7 +332,7 @@ function FitnessAIChatbot() {
     };
 
     // Generate payloads for each day
-    const payloads = generatePayloads(jsonData);
+    const payloads = generatePayloads(jsonData, selectedWeek);
     Promise.all(
       payloads.map((apiData) =>
         api.post("/diet/setdiet", apiData).then((res) => {
@@ -319,6 +347,7 @@ function FitnessAIChatbot() {
       .then(() => {
         setLoading(false);
         setIsSaveModalOpen(false);
+        setSelectedWeek("");
         setMessage(null);
         toastr.success("Diet data saved successfully!");
       })
@@ -349,7 +378,6 @@ function FitnessAIChatbot() {
                 className="w-full border border-gray-300 p-2 rounded-md !text-black !text-[16px]"
                 placeholder="Select a Week"
               >
-                <option value="">Select a Week</option>
                 <option value="currentWeek">
                   Current Week ({getWeekDates(1).start} - {getWeekDates(1).end})
                 </option>
@@ -378,6 +406,7 @@ function FitnessAIChatbot() {
                 onClick={() => {
                   setIsSaveModalOpen(false);
                   setMessage(null);
+                  setSelectedWeek("");
                 }}
                 className="text-gray-500 hover:text-gray-700 text-[12px]"
               >
@@ -425,7 +454,7 @@ function FitnessAIChatbot() {
                 )}
 
                 {/* Conditionally render the save button if message.shouldSave is true */}
-                {message.shouldSave && (
+                {message.shouldSave && message.saveType === "diet" && (
                   <button
                     className="absolute top-1 right-1 bg-[#5534a5] text-white text-xs px-2 py-1 rounded "
                     onClick={() => handleSaveMessage(message)}
