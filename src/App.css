@@ -1,6 +1,9 @@
 .App {
   text-align: center;
 }
+.body {
+  background-color: #f0f0f0;
+}
 
 .App-logo {
   height: 40vmin;
@@ -28,15 +31,15 @@
   color: #61dafb;
 }
 
-.custom-container table{
+.custom-container table {
   font-size: 13px;
   margin: 10px 0px;
 }
 
-.custom-container table thead tr th{
+.custom-container table thead tr th {
   padding: 0 1rem;
 }
-.custom-container table tbody tr td{
+.custom-container table tbody tr td {
   padding: 0.5rem 1rem;
 }
 @keyframes App-logo-spin {
@@ -48,5 +51,3 @@
   }
 }
 /* Add this to your global CSS file */
-
-

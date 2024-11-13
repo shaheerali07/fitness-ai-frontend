@@ -1,7 +1,9 @@
 import { Howl } from "howler";
 import parse from "html-react-parser";
 import React, { useEffect, useRef, useState } from "react";
+import { IoMdCloseCircleOutline } from "react-icons/io";
 import PuffLoader from "react-spinners/PuffLoader";
+import toastr from "toastr";
 import api from "../../service/axios";
 
 function FitnessAIChatbot() {
@@ -15,7 +17,10 @@ function FitnessAIChatbot() {
   const email = user ? JSON.parse(user).email : "";
   const userId = user ? JSON.parse(user).id : "";
   const [loading, setLoading] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [message, setMessage] = useState(null);
   const [input, setInput] = useState("");
+  const [selectedWeek, setSelectedWeek] = useState("");
   const chatEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -31,38 +36,28 @@ function FitnessAIChatbot() {
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
     return `${hours}:${formattedMinutes} ${ampm}`;
   };
-
-  useEffect(() => {
-    const fetchUserChatHistory = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get(`/chatbot/chatHistory?userId=${userId}`);
-        if (response.data) {
-          setLoading(false);
-          const chatHistory = response.data.messages.map((message) => {
-            return {
-              text: message.message,
-              sender: message.sender === "user" ? "user" : "ai",
-              timestamp: formatTimestamp(message.timestamp),
-            };
-          });
-          chatHistory.unshift({
-            text: "Hi there, how can I be of service for you today?",
-            sender: "ai",
-            timestamp: formatTimestamp(new Date()),
-          });
-          setMessages(chatHistory);
-        } else {
-          setLoading(false);
-          setMessages([
-            {
-              text: "Hi there, how can I be of service for you today?",
-              sender: "ai",
-              timestamp: formatTimestamp(new Date()),
-            },
-          ]);
-        }
-      } catch (error) {
+  const fetchUserChatHistory = async () => {
+    setLoading(true);
+    try {
+      const response = await api.get(`/chatbot/chatHistory?userId=${userId}`);
+      if (response.data) {
+        setLoading(false);
+        const chatHistory = response.data.messages.map((message) => {
+          return {
+            text: message.message,
+            sender: message.sender === "user" ? "user" : "ai",
+            timestamp: formatTimestamp(message.timestamp),
+            shouldSave: message.shouldSave,
+            saveType: message.saveType,
+          };
+        });
+        chatHistory.unshift({
+          text: "Hi there, how can I be of service for you today?",
+          sender: "ai",
+          timestamp: formatTimestamp(new Date()),
+        });
+        setMessages(chatHistory);
+      } else {
         setLoading(false);
         setMessages([
           {
@@ -71,11 +66,23 @@ function FitnessAIChatbot() {
             timestamp: formatTimestamp(new Date()),
           },
         ]);
-        console.error("Error fetching chat history:", error);
       }
-    };
+    } catch (error) {
+      setLoading(false);
+      setMessages([
+        {
+          text: "Hi there, how can I be of service for you today?",
+          sender: "ai",
+          timestamp: formatTimestamp(new Date()),
+        },
+      ]);
+      console.error("Error fetching chat history:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchUserChatHistory();
-  }, [userId]);
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -110,9 +117,11 @@ function FitnessAIChatbot() {
             setMessages((prevMessages) => [
               ...prevMessages,
               {
-                text: res.data,
+                text: res.data.message,
                 sender: "ai",
                 timestamp: formatTimestamp(new Date()),
+                shouldSave: res.data.shouldSave,
+                saveType: res.data.saveType,
               },
             ]);
             notificationSound.play();
@@ -158,9 +167,11 @@ function FitnessAIChatbot() {
           setMessages((prevMessages) => [
             ...prevMessages,
             {
-              text: res.data,
+              text: res.data.message,
               sender: "ai",
               timestamp: formatTimestamp(new Date()),
+              shouldSave: res.data.shouldSave,
+              saveType: res.data.saveType,
             },
           ]);
           notificationSound.play();
@@ -171,84 +182,303 @@ function FitnessAIChatbot() {
         console.error("Error calling the chatbot API:", error);
       });
   };
+  function generatePayloads(jsonData) {
+    const email = localStorage.getItem("fitnessemail");
+    const password = localStorage.getItem("fitnesspassword");
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+
+    return jsonData.dietPlan.map((dayData, index) => {
+      const date = new Date();
+      date.setDate(currentDate.getDate() + (index - currentDate.getDay() + 1)); // Set to each day's date in the week
+
+      // Organize meal data
+      const meal = {
+        breakfast: dayData["Breakfast"] ? [dayData["Breakfast"].foodName] : [],
+        snack1: dayData["Snack 1"] ? [dayData["Snack 1"].foodName] : [],
+        lunch: dayData["Lunch"] ? [dayData["Lunch"].foodName] : [],
+        snack2: dayData["Snack 2"] ? [dayData["Snack 2"].foodName] : [],
+        dinner: dayData["Dinner"] ? [dayData["Dinner"].foodName] : [],
+      };
+
+      // Organize amount data
+      const amount = {
+        breakfast: meal.breakfast.length > 0 ? ["100"] : [],
+        snack1: meal.snack1.length > 0 ? ["100"] : [],
+        lunch: meal.lunch.length > 0 ? ["100"] : [],
+        snack2: meal.snack2.length > 0 ? ["100"] : [],
+        dinner: meal.dinner.length > 0 ? ["100"] : [],
+      };
+
+      // Payload structure for each day
+      return {
+        header: {
+          email: email,
+          password: password,
+        },
+        updateData: {
+          year: currentYear,
+          month: currentMonth,
+          date: date.getDate(),
+          day: index + 1, // Day of the week: Monday is 1, Tuesday is 2, etc.
+          meal: meal,
+          amount: amount,
+        },
+      };
+    });
+  }
+  function handleSaveMessage(message) {
+    if (message.saveType === "diet" && message.shouldSave) {
+      setIsSaveModalOpen(true);
+      setMessage(message);
+    }
+  }
+  // Function to get the start and end date for a given week number
+  const getWeekDates = (weekNumber) => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const currentMonday = new Date(today);
+    currentMonday.setDate(
+      today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)
+    ); // Get the start of the current week
+
+    // Calculate the start date of the desired week
+    const startOfWeek = new Date(currentMonday);
+    startOfWeek.setDate(currentMonday.getDate() + 7 * (weekNumber - 1));
+
+    // Calculate the end date of the desired week
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+    return {
+      start: startOfWeek.toLocaleDateString(),
+      end: endOfWeek.toLocaleDateString(),
+    };
+  };
+
+  const handleSave = () => {
+    // Implement save logic here
+    setLoading(true);
+
+    const html = message.text;
+
+    // Parse the HTML string to extract table data
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // Extract table headers
+    const headers = Array.from(doc.querySelectorAll("thead th")).map((header) =>
+      header.textContent.trim()
+    );
+
+    // Extract table rows data
+    const data = Array.from(doc.querySelectorAll("tbody tr")).map((row) => {
+      const cells = Array.from(row.querySelectorAll("td"));
+      const rowData = {};
+
+      // Populate rowData with header as key and cell content as value
+      headers.forEach((header, index) => {
+        const cellText = cells[index].textContent.trim();
+
+        // Extract food name and calories if they exist in the cell
+        const match = cellText.match(/^(.*) \((\d+ kcal)\)$/);
+        if (match) {
+          rowData[header] = {
+            foodName: match[1].trim(),
+            kcal: parseInt(match[2].replace(" kcal", ""), 10),
+          };
+        } else {
+          rowData[header] = cellText; // If no calories are found, just store the text
+        }
+      });
+
+      return rowData;
+    });
+
+    // JSON format output
+    const jsonData = {
+      saveType: message.saveType,
+      timestamp: message.timestamp,
+      dietPlan: data,
+    };
+
+    // Generate payloads for each day
+    const payloads = generatePayloads(jsonData);
+    Promise.all(
+      payloads.map((apiData) =>
+        api.post("/diet/setdiet", apiData).then((res) => {
+          if (res.data.success) {
+            console.log("Diet data saved successfully");
+          } else {
+            console.error("Error saving diet data:", res.data.error);
+          }
+        })
+      )
+    )
+      .then(() => {
+        setLoading(false);
+        setIsSaveModalOpen(false);
+        setMessage(null);
+        toastr.success("Diet data saved successfully!");
+      })
+      .catch((error) => {
+        toastr.error("Error saving diet data");
+        console.error("Error saving diet data:", error);
+      });
+  };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-150px)] rounded-lg bg-gray-100">
-      <div className="flex items-center px-4 py-3 rounded-lg bg-gray-200">
-        <img src="Fitness AI.png" alt="ai Avatar" className=" h-10 w-10" />
-        <div className="ml-4 text-lg text-black font-semibold">Fitness AI</div>
-      </div>
+    <>
+      {/* Modal */}
+      {isSaveModalOpen && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-8 relative rounded-lg shadow-xl w-[400px]">
+            {/* Select Box */}
+            <div className="mb-4">
+              <label
+                htmlFor="weekSelect"
+                className="block text-gray-700 mb-2 text-[18px] font-bold"
+              >
+                Select Week in which you want to save the diet plan
+              </label>
+              <select
+                id="weekSelect"
+                value={selectedWeek}
+                onChange={(e) => setSelectedWeek(e.target.value)}
+                className="w-full border border-gray-300 p-2 rounded-md !text-black !text-[16px]"
+                placeholder="Select a Week"
+              >
+                <option value="">Select a Week</option>
+                <option value="currentWeek">
+                  Current Week ({getWeekDates(1).start} - {getWeekDates(1).end})
+                </option>
+                <option value="secondWeek">
+                  Second Week ({getWeekDates(2).start} - {getWeekDates(2).end})
+                </option>
+                <option value="thirdWeek">
+                  Third Week ({getWeekDates(3).start} - {getWeekDates(3).end})
+                </option>
+              </select>
+            </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              message.sender === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`text-[17px] px-4 py-2 rounded-lg ${
-                message.sender === "user"
-                  ? "bg-[#5534a5] text-white text-right"
-                  : "bg-gray-300 text-black text-left"
-              }`}
-            >
-              <div>{parse(message.text)}</div>
-              {message.text !==
-                "Hi there, how can I be of service for you today?" && (
-                <div
-                  className={`text-xs ${
-                    message.sender === "user"
-                      ? "text-white-100"
-                      : "text-gray-500"
-                  }  mt-1 text-right`}
-                >
-                  {message.timestamp}
-                </div>
-              )}
+            {/* Save Button */}
+            <div className="flex justify-center">
+              <button
+                onClick={handleSave}
+                className="bg-green-500 text-white px-4 py-2 text-[18px] rounded-lg hover:bg-green-600"
+              >
+                Save
+              </button>
+            </div>
+
+            {/* Close Button */}
+            <div className="absolute top-0 right-1">
+              <button
+                onClick={() => {
+                  setIsSaveModalOpen(false);
+                  setMessage(null);
+                }}
+                className="text-gray-500 hover:text-gray-700 text-[12px]"
+              >
+                <IoMdCloseCircleOutline size={22} />
+              </button>
             </div>
           </div>
-        ))}
-        <div ref={chatEndRef} />
-      </div>
+        </div>
+      )}
+      <div className="flex flex-col h-[calc(100vh-150px)] rounded-lg bg-gray-100">
+        <div className="flex items-center px-4 py-3 rounded-lg bg-gray-200">
+          <img src="Fitness AI.png" alt="ai Avatar" className=" h-10 w-10" />
+          <div className="ml-4 text-lg text-black font-semibold">
+            Fitness AI
+          </div>
+        </div>
 
-      <div className="p-4 flex space-x-2">
-        <button
-          onClick={() => handlePromptClick("Suggest me diet plans")}
-          style={{ border: "2px solid #5534a5" }}
-          className="px-3 text-[17px] py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
-        >
-          Suggest me diet plans
-        </button>
-        <button
-          style={{ border: "2px solid #5534a5" }}
-          onClick={() => handlePromptClick("Suggest me exercise plans")}
-          className="px-3 text-[17px] py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
-        >
-          Suggest me exercise plans
-        </button>
-      </div>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`flex ${
+                message.sender === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              <div
+                className={`relative text-[17px] px-4 py-2 rounded-lg ${
+                  message.sender === "user"
+                    ? "bg-[#5534a5] text-white text-right"
+                    : "bg-gray-300 text-black text-left"
+                }`}
+              >
+                <div>{parse(message.text)}</div>
+                {message.text !==
+                  "Hi there, how can I be of service for you today?" && (
+                  <div
+                    className={`text-xs ${
+                      message.sender === "user"
+                        ? "text-white-100"
+                        : "text-gray-500"
+                    } mt-1 text-right`}
+                  >
+                    {message.timestamp}
+                  </div>
+                )}
 
-      <div className="p-4 bg-gray-200 flex items-center">
-        <input
-          type="text"
-          value={input}
-          disabled={loading}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="flex-1 p-2 border border-gray-300 text-base text-black rounded-lg focus:outline-none"
-          placeholder="Type your message..."
-        />
-        <button
-          disabled={loading}
-          onClick={handleSend}
-          className="ml-4 px-4 py-2 bg-[#5534a5] text-base text-white rounded-lg"
-        >
-          {loading ? <PuffLoader size={20} color={"#fff"} /> : "Send"}
-        </button>
+                {/* Conditionally render the save button if message.shouldSave is true */}
+                {message.shouldSave && (
+                  <button
+                    className="absolute top-1 right-1 bg-[#5534a5] text-white text-xs px-2 py-1 rounded "
+                    onClick={() => handleSaveMessage(message)}
+                    disabled={loading}
+                  >
+                    Save Response
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+          <div ref={chatEndRef} />
+        </div>
+
+        <div className="p-4 flex space-x-2">
+          <button
+            onClick={() => handlePromptClick("Suggest me diet plans")}
+            style={{ border: "2px solid #5534a5" }}
+            disabled={loading}
+            className="px-3 text-[17px] py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+          >
+            Suggest me diet plans
+          </button>
+          <button
+            style={{ border: "2px solid #5534a5" }}
+            disabled={loading}
+            onClick={() => handlePromptClick("Suggest me exercise plans")}
+            className="px-3 text-[17px] py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+          >
+            Suggest me exercise plans
+          </button>
+        </div>
+
+        <div className="p-4 bg-gray-200 flex items-center">
+          <input
+            type="text"
+            value={input}
+            disabled={loading}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-1 p-2 border border-gray-300 text-base text-black rounded-lg focus:outline-none"
+            placeholder="Type your message..."
+          />
+          <button
+            disabled={loading}
+            onClick={handleSend}
+            className="ml-4 px-4 py-2 bg-[#5534a5] text-base text-white rounded-lg"
+          >
+            {loading ? <PuffLoader size={20} color={"#fff"} /> : "Send"}
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
