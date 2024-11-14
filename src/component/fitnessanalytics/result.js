@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import api from "../../service/axios";
-import { getWeekStartAndEnd } from "../../utils/auth";
 
 function ResultWeekly(props) {
   return (
@@ -21,7 +19,7 @@ function ResultWeekly(props) {
   );
 }
 
-function Result({ history }) {
+function Result() {
   const [resultCounter, setResultCounter] = useState(0);
   const [resultAccuracy, setResultAccuracy] = useState(0);
   const [resultDurtime, setResultDurtime] = useState(0);
@@ -34,39 +32,39 @@ function Result({ history }) {
   const targetAccuracy = 100;
   const targetDurtime = 3000;
 
-  React.useEffect(() => {
-    const fetchCompletedPercentage = async () => {
-      try {
-        const { startDate, endDate } = getWeekStartAndEnd();
+  // React.useEffect(() => {
+  //   const fetchCompletedPercentage = async () => {
+  //     try {
+  //       const { startDate, endDate } = getWeekStartAndEnd();
 
-        const { data } = await api.get("/exercise/getTotals", {
-          params: {
-            startDate,
-            endDate,
-          },
-        });
-        if (data && data.totalCounter) {
-          setResultCounter(parseInt(data.totalCounter));
-          setProgressCounter(
-            (parseInt(data.totalCounter) / targetCounter) * 100
-          );
-          setResultAccuracy(parseInt(data.averageAccuracy));
-          setProgressAccuracy(
-            (parseInt(data.averageAccuracy) / targetAccuracy) * 100
-          );
-          setResultDurtime(parseInt(data.totalDuration));
-          setProgressDurtime(
-            (parseInt(data.totalDuration) / targetDurtime) * 100
-          );
-        } else {
-          console.log("Error fetching completed percentage");
-        }
-      } catch (error) {
-        console.error("Error fetching exercise stats:", error);
-      }
-    };
-    fetchCompletedPercentage();
-  }, []);
+  //       const { data } = await api.get("/exercise/getTotals", {
+  //         params: {
+  //           startDate,
+  //           endDate,
+  //         },
+  //       });
+  //       if (data && data.totalCounter) {
+  //         setResultCounter(parseInt(data.totalCounter));
+  //         setProgressCounter(
+  //           (parseInt(data.totalCounter) / targetCounter) * 100
+  //         );
+  //         setResultAccuracy(parseInt(data.averageAccuracy));
+  //         setProgressAccuracy(
+  //           (parseInt(data.averageAccuracy) / targetAccuracy) * 100
+  //         );
+  //         setResultDurtime(parseInt(data.totalDuration));
+  //         setProgressDurtime(
+  //           (parseInt(data.totalDuration) / targetDurtime) * 100
+  //         );
+  //       } else {
+  //         console.log("Error fetching completed percentage");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching exercise stats:", error);
+  //     }
+  //   };
+  //   fetchCompletedPercentage();
+  // }, []);
 
   return (
     <div className="flex flex-col justify-center items-center  w-[80%] h-[80%] md:w-[100%] xl:w-[100%]">
