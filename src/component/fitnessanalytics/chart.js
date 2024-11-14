@@ -50,7 +50,7 @@ function Chart() {
       </div>
 
       <div className="flex flex-col justify-center items-center w-[100%] xl:w-[40%] md:h-[100%]">
-        <Result history={history} />
+        <Result />
       </div>
     </div>
   );

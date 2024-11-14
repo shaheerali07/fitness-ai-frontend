@@ -1,55 +1,53 @@
-import React, { useEffect, useState } from "react";
-import api from "../../service/axios";
-import { getWeekStartAndEnd } from "../../utils/auth";
+import React, { useState } from "react";
 function TotalTime() {
   const [totalTime, setTotalTime] = useState("N/A");
   const [completedPercentage, setCompletedPercentage] = useState(0);
-  useEffect(() => {
-    const fetchTotalTime = async () => {
-      try {
-        const { startDate, endDate } = getWeekStartAndEnd();
+  // useEffect(() => {
+  //   const fetchTotalTime = async () => {
+  //     try {
+  //       const { startDate, endDate } = getWeekStartAndEnd();
 
-        const { data } = await api.get("/exercise/getTotalExerciseTime", {
-          params: {
-            startDate,
-            endDate,
-          },
-        });
-        if (data && data.totalDuration) {
-          setTotalTime(data.totalDuration);
-        } else {
-          console.log("Error fetching total time");
-        }
-      } catch (error) {
-        console.error("Error fetching exercise stats:", error);
-      }
-    };
-    const fetchCompletedPercentage = async () => {
-      try {
-        const { startDate, endDate } = getWeekStartAndEnd();
+  //       const { data } = await api.get("/exercise/getTotalExerciseTime", {
+  //         params: {
+  //           startDate,
+  //           endDate,
+  //         },
+  //       });
+  //       if (data && data.totalDuration) {
+  //         setTotalTime(data.totalDuration);
+  //       } else {
+  //         console.log("Error fetching total time");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching exercise stats:", error);
+  //     }
+  //   };
+  //   const fetchCompletedPercentage = async () => {
+  //     try {
+  //       const { startDate, endDate } = getWeekStartAndEnd();
 
-        const { data } = await api.get(
-          "/exercise/getCompletedExercisePercentage",
-          {
-            params: {
-              startDate,
-              endDate,
-            },
-          }
-        );
-        if (data && data.overallCompletionPercentage) {
-          setCompletedPercentage(parseInt(data.overallCompletionPercentage));
-        } else {
-          console.log("Error fetching completed percentage");
-        }
-      } catch (error) {
-        console.error("Error fetching exercise stats:", error);
-      }
-    };
+  //       const { data } = await api.get(
+  //         "/exercise/getCompletedExercisePercentage",
+  //         {
+  //           params: {
+  //             startDate,
+  //             endDate,
+  //           },
+  //         }
+  //       );
+  //       if (data && data.overallCompletionPercentage) {
+  //         setCompletedPercentage(parseInt(data.overallCompletionPercentage));
+  //       } else {
+  //         console.log("Error fetching completed percentage");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching exercise stats:", error);
+  //     }
+  //   };
 
-    fetchTotalTime();
-    fetchCompletedPercentage();
-  }, []);
+  //   fetchTotalTime();
+  //   fetchCompletedPercentage();
+  // }, []);
 
   return (
     <div className="flex  border rounded-xl  w-[100%] h-[48%] justify-center items-center mt-2">
