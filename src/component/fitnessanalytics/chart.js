@@ -7,7 +7,6 @@ function Chart() {
 
   const today = new Date();
   const dayOfWeek = today.getDay();
-  const [accidentID, setAccidentID] = useState(dayOfWeek);
 
   const date = [];
   const month = [];
@@ -41,12 +40,13 @@ function Chart() {
       .then((res) => {
         setHistory(res.data);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="flex flex-col xl:flex-row justify-center items-center w-[96%]">
       <div className="w-[100%] h-[230px] sm:h-[300px] md:h-[500px] xl:h-[40vh] xl:w-[60%]">
-        <MUIChart history={history} />
+        <MUIChart />
       </div>
 
       <div className="flex flex-col justify-center items-center w-[100%] xl:w-[40%] md:h-[100%]">

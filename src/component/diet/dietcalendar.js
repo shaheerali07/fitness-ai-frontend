@@ -9,7 +9,6 @@ function DietCalendar({ dietPlan, setDietPlan, btnEnable, setBtnEnable }) {
   const year = [];
   const month = [];
   const date = [];
-  const day = [];
 
   // Ensure the Monday of the current week is correctly set
   const monday = new Date(today);
@@ -33,6 +32,7 @@ function DietCalendar({ dietPlan, setDietPlan, btnEnable, setBtnEnable }) {
       day: currentDate.getDay(),
     };
     setDietPlan(newData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

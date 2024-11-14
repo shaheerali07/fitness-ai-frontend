@@ -66,7 +66,7 @@ function DietGoalEdit(props) {
           <input
             className="form-control mb-1 text-[10px]"
             type="number"
-            style={{ width: "40%", fontSize: "15px" }}
+            style={{ width: "50%", fontSize: "15px" }}
             placeholder="targetKarory"
             value={targetKcal}
             onChange={(e) => {

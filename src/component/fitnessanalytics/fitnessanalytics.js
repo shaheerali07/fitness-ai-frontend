@@ -8,11 +8,34 @@ import TotalProgress from "./totalprogress";
 import TotalTime from "./totaltime";
 
 function FitnessAnalytics({ email, password }) {
+  const [user, setUser] = useState(null);
+  const fetchUserByEmail = () => {
+    api
+      .get("/admin/getUserByEmail", {
+        params: { email: localStorage.getItem("fitnessemail") },
+      })
+      .then((res) => {
+        const message = res.data.message;
+        if (message === "success") {
+          const result = res.data.data;
+          setUser(result);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    fetchUserByEmail();
+  }, []);
+
   const [planData, setPlanData] = useState({
     year: "",
     month: "",
     date: "",
     day: "",
+    status: "",
     exerciseType: [],
     exerciseTime: [],
   });
@@ -44,6 +67,8 @@ function FitnessAnalytics({ email, password }) {
             ...planData,
             exerciseType: result.exerciseType.exerciseName,
             exerciseTime: result.exerciseType.exerciseTime,
+            exerciseStatus: result.exerciseType.exerciseStatus,
+            id: result._id,
           };
           setPlanData(newData);
         } else {
@@ -51,10 +76,12 @@ function FitnessAnalytics({ email, password }) {
             ...planData,
             exerciseType: [],
             exerciseTime: [],
+            exerciseStatus: [],
           };
           setPlanData(newData);
         }
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planData.day]);
 
   return (
@@ -72,7 +99,7 @@ function FitnessAnalytics({ email, password }) {
       <div className="w-[90%] mr-[2%] ml-[5%] mt-2 xl:mt-[0px]  xl:w-[60%] xl:h-[100%] xl:ml-[2%]">
         <div className="flex flex-col md:flex-row w-[100%] xl:w-[100%] xl:h-[40%] xl:mt-[0px]">
           <div className="flex flex-col w-[100%] mr-[2%] mt-[2%] mb-[2%]">
-            <FitnessGoal />
+            <FitnessGoal user={user} />
             <TotalTime />
           </div>
 

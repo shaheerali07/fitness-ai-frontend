@@ -1,89 +1,57 @@
-import React, { useEffect, useState } from 'react';
-import { LineChart } from '@mui/x-charts/LineChart';
+import { LineChart } from "@mui/x-charts/LineChart";
+import React, { useEffect, useState } from "react";
+import api from "../../service/axios";
+import { getWeekStartAndEnd } from "../../utils/auth";
 
-
-export default function SimpleLineChart({ history }) {
-
+const WeeklyExerciseStatsChart = () => {
+  const [xLabels, setXLabels] = useState([]);
+  const [resultAccuracy, setResultAccuracy] = useState([]);
   const [resultCounter, setResultCounter] = useState([]);
-  const [resultAccuracy, setResultAccuracy] = useState([])
-  const [resultDurtime, setResultDurtime] = useState([])
-
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-  const date = []
-  const month = []
-  const year = []
-
-  for (let i = 0; i < 7; i++) {
-    const currentDate = new Date();
-    const futureDate = new Date(currentDate.setDate(currentDate.getDate() - dayOfWeek + i));
-    date.push(futureDate.getDate())
-    month.push(futureDate.getMonth() + 1)
-    year.push(futureDate.getFullYear())
-  }
-
-  const hyear = []
-  const hmonth = []
-  const hdate = []
-  const hcounter = []
-  const haccuracy = []
-  const hdurtime = []
+  const [resultDurtime, setResultDurtime] = useState([]);
 
   useEffect(() => {
-    if (history === null) return
-    history.map((item, index) => {
-      hyear.push(Number(item._id.year))
-      hmonth.push(Number(item._id.month))
-      hdate.push(Number(item._id.date))
-      hcounter.push(Number(item.averageCounter))
-      haccuracy.push(Number(item.averageAccuracy))
-      hdurtime.push(Number(item.averageDurtime))
-      const counter = []
-      const accuracy = []
-      const durtime = []
-      for (let i = 0; i < 7; i++) {
-        let k = 0
-        for (let j = 0; j < history.length; j++)
-          if (year[i] === hyear[j] &&
-            month[i] === hmonth[j] &&
-            date[i] === hdate[j]) {
-            counter[i] = hcounter[j]
-            accuracy[i] = haccuracy[j]
-            durtime[i] = hdurtime[j]
-            k = 1
-          }
-        if (k === 0) {
-          counter[i] = 0
-          accuracy[i] = 0
-          durtime[i] = 0
-        }
+    const fetchExerciseStats = async () => {
+      try {
+        const { startDate, endDate } = getWeekStartAndEnd();
+
+        const { data } = await api.get("/exercise/getWeeklyExerciseStats", {
+          params: {
+            startDate,
+            endDate,
+          },
+        });
+
+        // Process the response to separate data for the chart
+        const chartData = data.chartData;
+        console.log(chartData);
+
+        const dates = chartData.map((item) => item.date);
+        const accuracies = chartData.map((item) => item.accuracy);
+        const counters = chartData.map((item) => item.counter);
+        const durations = chartData.map((item) => item.duration);
+
+        setXLabels(dates);
+        setResultAccuracy(accuracies);
+        setResultCounter(counters);
+        setResultDurtime(durations);
+      } catch (error) {
+        console.error("Error fetching exercise stats:", error);
       }
-      setResultAccuracy(accuracy)
-      setResultCounter(counter)
-      setResultDurtime(durtime)
-    })
-  }, [history])
+    };
 
-
-
-  const xLabels = [
-    'Sun',
-    'Mon',
-    'Tue',
-    'Wed',
-    'Thu',
-    'Fri',
-    'Sat',
-  ];
-
+    fetchExerciseStats();
+  }, []);
   return (
-      <LineChart className='w-[80%]'
-        series={[
-          { data: resultAccuracy, label: 'Accuracy' },
-          { data: resultCounter, label: 'Counter' },
-          { data: resultDurtime, label: 'Duration' },
-        ]}
-        xAxis={[{ scaleType: 'point', data: xLabels }]}
-      />
-    );
-}
+    <LineChart
+      className="w-[80%]"
+      series={[
+        { data: resultAccuracy, label: "Accuracy" },
+        { data: resultCounter, label: "Counter" },
+        { data: resultDurtime, label: "Duration" },
+      ]}
+      xAxis={[{ scaleType: "point", data: xLabels }]}
+    />
+  );
+};
+
+export default WeeklyExerciseStatsChart;

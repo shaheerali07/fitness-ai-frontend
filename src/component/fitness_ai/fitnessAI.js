@@ -82,6 +82,7 @@ function FitnessAIChatbot() {
 
   useEffect(() => {
     fetchUserChatHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -256,8 +257,137 @@ function FitnessAIChatbot() {
       };
     });
   }
+  // function generateExercisePayloads(jsonData, selectedWeek) {
+  //   const email = localStorage.getItem("fitnessemail");
+  //   const password = localStorage.getItem("fitnesspassword");
+  //   const currentDate = new Date();
+  //   const currentYear = currentDate.getFullYear();
+  //   const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+
+  //   // Function to get the start date of a specific week
+  //   const getStartOfWeek = (weekOffset) => {
+  //     const dayOfWeek = currentDate.getDay();
+  //     const currentMonday = new Date(currentDate);
+  //     currentMonday.setDate(
+  //       currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)
+  //     ); // Start of current week (Monday)
+  //     const startOfWeek = new Date(currentMonday);
+  //     startOfWeek.setDate(currentMonday.getDate() + 7 * weekOffset); // Adjust for week offset
+  //     return startOfWeek;
+  //   };
+
+  //   // Determine the start date based on the selected week
+  //   let startOfWeek;
+  //   switch (selectedWeek) {
+  //     case "secondWeek":
+  //       startOfWeek = getStartOfWeek(1); // Second week
+  //       break;
+  //     case "thirdWeek":
+  //       startOfWeek = getStartOfWeek(2); // Third week
+  //       break;
+  //     case "currentWeek":
+  //     default:
+  //       startOfWeek = getStartOfWeek(0); // Current week
+  //       break;
+  //   }
+
+  //   // Generate payloads for each day in the selected week
+  //   return jsonData
+  //     .map((dayData, index) => {
+  //       const date = new Date(startOfWeek);
+  //       date.setDate(startOfWeek.getDate() + index); // Set date for each day in the week
+
+  //       // Generate separate payloads for each exercise type
+  //       return ["Warm-up", "Main Exercise", "Cool-down"].map(
+  //         (exerciseType) => ({
+  //           header: {
+  //             email: email,
+  //             password: password,
+  //           },
+  //           updateData: {
+  //             year: currentYear,
+  //             month: currentMonth,
+  //             date: date.getDate(),
+  //             day: index, // Day of the week: Monday is 0, Tuesday is 1, etc.
+  //             exerciseType: {
+  //               exerciseName: [dayData[exerciseType]],
+  //               exerciseTime: ["-"], // Placeholder for exercise time
+  //             },
+  //           },
+  //         })
+  //       );
+  //     })
+  //     .flat(); // Flatten the array so each exercise has its own entry
+  // }
+  function generateExercisePayloads(jsonData, selectedWeek) {
+    const email = localStorage.getItem("fitnessemail");
+    const password = localStorage.getItem("fitnesspassword");
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+
+    // Function to get the start date of a specific week
+    const getStartOfWeek = (weekOffset) => {
+      const dayOfWeek = currentDate.getDay();
+      const currentMonday = new Date(currentDate);
+      currentMonday.setDate(
+        currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)
+      ); // Start of current week (Monday)
+      const startOfWeek = new Date(currentMonday);
+      startOfWeek.setDate(currentMonday.getDate() + 7 * weekOffset); // Adjust for week offset
+      return startOfWeek;
+    };
+
+    // Determine the start date based on the selected week
+    let startOfWeek;
+    switch (selectedWeek) {
+      case "secondWeek":
+        startOfWeek = getStartOfWeek(1); // Second week
+        break;
+      case "thirdWeek":
+        startOfWeek = getStartOfWeek(2); // Third week
+        break;
+      case "currentWeek":
+      default:
+        startOfWeek = getStartOfWeek(0); // Current week
+        break;
+    }
+
+    // Generate payloads for each day in the selected week
+    return jsonData.map((dayData, index) => {
+      const date = new Date(startOfWeek);
+      date.setDate(startOfWeek.getDate() + index); // Set date for each day in the week
+
+      // Gather all exercises for the day in arrays
+      const exerciseNames = ["Warm-up", "Main Exercise", "Cool-down"].map(
+        (exerciseType) => dayData[exerciseType]
+      );
+      const exerciseTimes = exerciseNames.map(() => "-"); // Placeholder for exercise times
+      const exerciseStatus = exerciseNames.map(() => "incomplete"); // Placeholder for exercise status
+
+      // Return a single payload for the day
+      return {
+        header: {
+          email: email,
+          password: password,
+        },
+        updateData: {
+          year: currentYear,
+          month: currentMonth,
+          date: date.getDate(),
+          day: index, // Day of the week: Monday is 0, Tuesday is 1, etc.
+          exerciseType: {
+            exerciseName: exerciseNames,
+            exerciseTime: exerciseTimes,
+            exerciseStatus: exerciseStatus,
+          },
+        },
+      };
+    });
+  }
+
   function handleSaveMessage(message) {
-    if (message.saveType === "diet" && message.shouldSave) {
+    if (message.shouldSave) {
       setIsSaveModalOpen(true);
       setMessage(message);
     }
@@ -286,75 +416,131 @@ function FitnessAIChatbot() {
   };
 
   const handleSave = () => {
-    // Implement save logic here
-    setLoading(true);
+    if (message && message.saveType === "diet") {
+      // Implement save logic here
+      setLoading(true);
 
-    const html = message.text;
+      const html = message.text;
 
-    // Parse the HTML string to extract table data
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+      // Parse the HTML string to extract table data
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
 
-    // Extract table headers
-    const headers = Array.from(doc.querySelectorAll("thead th")).map((header) =>
-      header.textContent.trim()
-    );
+      // Extract table headers
+      const headers = Array.from(doc.querySelectorAll("thead th")).map(
+        (header) => header.textContent.trim()
+      );
 
-    // Extract table rows data
-    const data = Array.from(doc.querySelectorAll("tbody tr")).map((row) => {
-      const cells = Array.from(row.querySelectorAll("td"));
-      const rowData = {};
+      // Extract table rows data
+      const data = Array.from(doc.querySelectorAll("tbody tr")).map((row) => {
+        const cells = Array.from(row.querySelectorAll("td"));
+        const rowData = {};
 
-      // Populate rowData with header as key and cell content as value
-      headers.forEach((header, index) => {
-        const cellText = cells[index].textContent.trim();
+        // Populate rowData with header as key and cell content as value
+        headers.forEach((header, index) => {
+          const cellText = cells[index].textContent.trim();
 
-        // Extract food name and calories if they exist in the cell
-        const match = cellText.match(/^(.*) \((\d+ kcal)\)$/);
-        if (match) {
-          rowData[header] = {
-            foodName: match[1].trim(),
-            kcal: parseInt(match[2].replace(" kcal", ""), 10),
-          };
-        } else {
-          rowData[header] = cellText; // If no calories are found, just store the text
-        }
-      });
-
-      return rowData;
-    });
-
-    // JSON format output
-    const jsonData = {
-      saveType: message.saveType,
-      timestamp: message.timestamp,
-      dietPlan: data,
-    };
-
-    // Generate payloads for each day
-    const payloads = generatePayloads(jsonData, selectedWeek);
-    Promise.all(
-      payloads.map((apiData) =>
-        api.post("/diet/setdiet", apiData).then((res) => {
-          if (res.data.success) {
-            console.log("Diet data saved successfully");
+          // Extract food name and calories if they exist in the cell
+          const match = cellText.match(/^(.*) \((\d+ kcal)\)$/);
+          if (match) {
+            rowData[header] = {
+              foodName: match[1].trim(),
+              kcal: parseInt(match[2].replace(" kcal", ""), 10),
+            };
           } else {
-            console.error("Error saving diet data:", res.data.error);
+            rowData[header] = cellText; // If no calories are found, just store the text
           }
-        })
-      )
-    )
-      .then(() => {
-        setLoading(false);
-        setIsSaveModalOpen(false);
-        setSelectedWeek("");
-        setMessage(null);
-        toastr.success("Diet data saved successfully!");
-      })
-      .catch((error) => {
-        toastr.error("Error saving diet data");
-        console.error("Error saving diet data:", error);
+        });
+
+        return rowData;
       });
+
+      // JSON format output
+      const jsonData = {
+        saveType: message.saveType,
+        timestamp: message.timestamp,
+        dietPlan: data,
+      };
+
+      // Generate payloads for each day
+      const payloads = generatePayloads(jsonData, selectedWeek);
+      Promise.all(
+        payloads.map((apiData) =>
+          api.post("/diet/setdiet", apiData).then((res) => {
+            if (res.data.success) {
+              console.log("Diet data saved successfully");
+            } else {
+              console.error("Error saving diet data:", res.data.error);
+            }
+          })
+        )
+      )
+        .then(() => {
+          setLoading(false);
+          setIsSaveModalOpen(false);
+          setSelectedWeek("");
+          setMessage(null);
+          toastr.success("Diet data saved successfully!");
+        })
+        .catch((error) => {
+          toastr.error("Error saving diet data");
+          console.error("Error saving diet data:", error);
+        });
+    } else if (message && message.saveType === "exercise") {
+      // Exercise save logic here
+
+      const html = message.text;
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+
+      const headers = Array.from(doc.querySelectorAll("thead th")).map(
+        (header) => header.textContent.trim()
+      );
+
+      // Extract table data into a structured array
+      const data = Array.from(doc.querySelectorAll("tbody tr")).map((row) => {
+        const cells = Array.from(row.querySelectorAll("td"));
+        const rowData = {};
+
+        headers.forEach((header, index) => {
+          rowData[header] = cells[index].textContent.trim();
+        });
+
+        return rowData;
+      });
+
+      // Use generatePayloads to create exercise payloads based on selected week
+      const exercisePayloads = generateExercisePayloads(data, selectedWeek);
+
+      // Optionally, you can now post each payload to the backend if needed:
+      Promise.all(
+        exercisePayloads.map((payload) =>
+          api.post("/exercise/setexercise", payload).then((res) => {
+            if (res.data.success) {
+              console.log(
+                "Exercise data saved successfully for:",
+                payload.updateData.date
+              );
+            } else {
+              console.error("Error saving exercise data:", res.data.error);
+            }
+          })
+        )
+      )
+        .then(() => {
+          setLoading(false);
+          setIsSaveModalOpen(false);
+          setSelectedWeek("");
+          setMessage(null);
+          toastr.success("Exercise data saved successfully!");
+        })
+        .catch((error) => {
+          toastr.error("Error saving exercise data");
+          console.error("Error saving exercise data:", error);
+        });
+    } else {
+      console.error("Invalid message or save type");
+    }
   };
 
   return (
@@ -394,7 +580,7 @@ function FitnessAIChatbot() {
             <div className="flex justify-center">
               <button
                 onClick={handleSave}
-                className="bg-green-500 text-white px-4 py-2 text-[18px] rounded-lg hover:bg-green-600"
+                className="bg-[#5534a5] text-white px-4 py-2 text-[18px] rounded-lg hover:bg-[#4c2f8b] transition"
               >
                 Save
               </button>
@@ -436,10 +622,20 @@ function FitnessAIChatbot() {
                 className={`relative text-[17px] px-4 py-2 rounded-lg ${
                   message.sender === "user"
                     ? "bg-[#5534a5] text-white text-right"
-                    : "bg-gray-300 text-black text-left"
+                    : "!bg-gray-300 text-black text-left"
                 }`}
               >
-                <div>{parse(message.text)}</div>
+                <div
+                  className={`
+                  ${
+                    message.sender === "user"
+                      ? "bg-[#5534a5] "
+                      : "!bg-gray-300 "
+                  }
+                  `}
+                >
+                  {parse(message.text)}
+                </div>
                 {message.text !==
                   "Hi there, how can I be of service for you today?" && (
                   <div
@@ -454,13 +650,13 @@ function FitnessAIChatbot() {
                 )}
 
                 {/* Conditionally render the save button if message.shouldSave is true */}
-                {message.shouldSave && message.saveType === "diet" && (
+                {message.shouldSave && (
                   <button
-                    className="absolute top-1 right-1 bg-[#5534a5] text-white text-xs px-2 py-1 rounded "
+                    className="absolute bottom-[2px] left-[45%] bg-[#5534a5] hover:bg-[#4c2f8b] transition text-white text-xs px-2 py-1 rounded "
                     onClick={() => handleSaveMessage(message)}
                     disabled={loading}
                   >
-                    Save Response
+                    Add To Plan
                   </button>
                 )}
               </div>
@@ -501,7 +697,7 @@ function FitnessAIChatbot() {
           <button
             disabled={loading}
             onClick={handleSend}
-            className="ml-4 px-4 py-2 bg-[#5534a5] text-base text-white rounded-lg"
+            className="ml-4 px-4 py-2 bg-[#5534a5] hover:bg-[#4c2f8b] transition text-base text-white rounded-lg"
           >
             {loading ? <PuffLoader size={20} color={"#fff"} /> : "Send"}
           </button>
