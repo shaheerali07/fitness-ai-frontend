@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../../../service/axios";
 import "./Result.css";
 import { kind_select } from "./select_kind_exercise";
@@ -39,6 +39,7 @@ function Result({
     if (selectedKind.category === "GYM EXERCISES") {
       exerciseResult.exercise = number_exercise;
     }
+    exerciseResult.hour = exerciseResult.durtime;
     const header = {
       email: localStorage.getItem("fitnessemail"),
       password: localStorage.getItem("fitnesspassword"),
@@ -47,7 +48,7 @@ function Result({
       .post("/exercise/setlogs", { header, updateData: exerciseResult })
       .then((res) => {
         if (res.data.message === "success")
-          toastr.success("Saved successfully!");
+          toast.success("Saved successfully!");
       });
   };
   useEffect(() => {
@@ -181,13 +182,13 @@ function Result({
         </video>
         <div className="flex flex-col xl:flex-row justify-center items-center w-[80%] h-[100%] xl:w-[100%]">
           <button
-            className="w-[90%] h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
+            className="w-[90%] disabled:cursor-not-allowed h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
             onClick={setSaveExercise}
           >
             Save
           </button>
           <button
-            className="w-[90%] h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
+            className="w-[90%] h-[30%] disabled:cursor-not-allowed mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
             onClick={() => {
               if (iswebcamEnable) {
                 if (!number_subcategory) {
@@ -226,7 +227,7 @@ function Result({
       <select
         ref={selectCategoryRef}
         disabled={isSelectDisabled}
-        className="form-control"
+        className="form-control disabled:cursor-not-allowed"
         style={{ width: "80%", marginTop: "2vw" }}
         onChange={(e) => {
           setNumberCategory(e.target.value);
@@ -246,7 +247,7 @@ function Result({
         <select
           ref={selectSubcategoryRef}
           disabled={isSelectDisabled}
-          className="form-control"
+          className="form-control disabled:cursor-not-allowed"
           style={{ width: "80%", marginTop: "2vw" }}
           onChange={(e) => setNumberSubcategory(e.target.value)}
         >
@@ -264,7 +265,7 @@ function Result({
         <select
           ref={selectExerciseRef}
           disabled={isSelectDisabled}
-          className="form-control"
+          className="form-control disabled:cursor-not-allowed"
           style={{ width: "80%", marginTop: "2vw" }}
           onChange={(e) => setNumberExercise(e.target.value)}
         >

@@ -444,6 +444,7 @@ function Meal({
                 }}
               >
                 <img
+                  alt=""
                   src={index === accidentID ? "close_hover.png" : "close.png"}
                   onMouseEnter={() => {
                     setAccidentID(index);

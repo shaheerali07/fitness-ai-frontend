@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../../../service/axios";
 import "./Result.css";
 import { kind_select } from "./select_kind_exercise";
@@ -37,8 +37,7 @@ function Result2({
     api
       .post("/exercise/setlogs", { header: header, updateData: updateData })
       .then((res) => {
-        if (res.data.message === "success")
-          toastr.success("Save successfully!");
+        if (res.data.message === "success") toast.success("Save successfully!");
       });
   };
   useEffect(() => {

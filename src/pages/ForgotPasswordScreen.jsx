@@ -2,7 +2,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import PuffLoader from "react-spinners/PuffLoader";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../service/axios";
 
 const ForgotPasswordScreen = () => {
@@ -21,18 +21,18 @@ const ForgotPasswordScreen = () => {
       });
       if (res.status === 200) {
         setLoading(false);
-        toastr.success("Password reset link sent to your email!");
+        toast.success("Password reset link sent to your email!");
         // window.location.replace(`/reset-password?email=${data.email}`);
       } else {
         setLoading(false);
 
-        toastr.error("Failed to send reset link. Please try again.");
+        toast.error("Failed to send reset link. Please try again.");
       }
     } catch (err) {
       setLoading(false);
 
       console.error("Error during forgot password: ", err);
-      toastr.error(
+      toast.error(
         err?.response?.data?.message ??
           "Something went wrong. Please try again."
       );

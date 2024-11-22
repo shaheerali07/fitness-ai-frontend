@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import PuffLoader from "react-spinners/PuffLoader";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../../service/axios";
+import { ExerciseContext } from "../../store/state.provider";
 import { getAllExercises } from "../../utils/auth";
 
-function FitnessPlan({ planData, setPlanData, email, password }) {
+function FitnessPlan({ planData, setPlanData }) {
+  const { refetch } = useContext(ExerciseContext);
   const [dailyPlanExercise, setDailyPlanExercise] = useState([]);
 
   const [dailyPlanTime, setDailyPlanTime] = useState([]);
@@ -56,7 +58,7 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
     const apiData = { header: header, updateData: updateData };
     api.post("/exercise/setexercise", apiData).then((res) => {
       if (res.data.message === "success") {
-        toastr.success("Exercise plan updated successfully.");
+        toast.success("Exercise plan updated successfully.");
         setLoader(false);
       } else {
         setLoader(false);
@@ -94,12 +96,16 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
       // Handle the response
       if (response.data.message === "Exercise status updated successfully.") {
         setLoader(false);
+        await refetch();
+        toast.success("Exercise status updated successfully.");
+
         // Update the exercise status in the local state
         const newStatus = dailyPlanStatus;
         newStatus[activeIndex] = "complete";
         setDailyPlanStatus(newStatus);
         setUpdateSignal((prev) => prev + 1);
         setIsSaveModalOpen(false);
+
         setActiveIndex(null);
         setCounterDetails({
           hours: 0,
@@ -107,11 +113,10 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
           seconds: 0,
           counter: 0,
         });
-        toastr.success("Exercise status updated successfully.");
       } else {
         setLoader(false);
         console.log("Error updating exercise status:", response.data.message);
-        toastr.error("An error occurred while updating the exercise status.");
+        toast.error("An error occurred while updating the exercise status.");
       }
     } catch (error) {
       setLoader(false);
@@ -135,24 +140,25 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
                 {/* Modal Header (if you want a title) */}
                 <div className="mb-4 text-center">
                   <h2 className="text-xl text-black font-semibold">
-                    Set Exercise Duration
+                    Set Exercise Details
                   </h2>
                 </div>
 
                 {/* Input Fields for Hours, Minutes, Seconds, and Counter */}
                 <div className="space-y-4">
-                  <p className="text-black text-sm">Enter Following Details</p>
-                  <div className="flex space-x-2 justify-between">
-                    <div className="flex flex-col items-start">
+                  {/* <p className="text-black text-sm">Enter Following Details</p> */}
+                  <div className="flex w-full justify-between">
+                    <div className="flex w-full flex-col items-start">
                       <label
                         htmlFor="hours"
                         className="text-sm font-medium text-gray-700"
                       >
-                        Hours
+                        Enter Duration (In Seconds)
                       </label>
                       <input
                         id="hours"
                         type="number"
+                        placeholder="How Long Did You Exercise? "
                         onChange={(e) =>
                           setCounterDetails({
                             ...counterDetails,
@@ -160,10 +166,10 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
                           })
                         }
                         min="0"
-                        className="w-20 px-3 py-2 text-black text-[14px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5534a5] focus:border-[#5534a5]"
+                        className="w-full mt-1 px-3 py-2 text-black text-[14px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5534a5] focus:border-[#5534a5]"
                       />
                     </div>
-                    <div className="flex flex-col items-start">
+                    {/* <div className="flex flex-col items-start">
                       <label
                         htmlFor="minutes"
                         className="text-sm font-medium text-gray-700"
@@ -202,7 +208,7 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
                         min="0"
                         className="w-20 px-3 py-2 text-black text-[14px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5534a5] focus:border-[#5534a5]"
                       />
-                    </div>
+                    </div> */}
                   </div>
 
                   {/* Counter input */}
@@ -211,11 +217,11 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
                       htmlFor="counter"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Counter
+                      Enter Counter
                     </label>
                     <input
                       id="counter"
-                      placeholder="How many times?"
+                      placeholder="How Many Times Did You Exercise?"
                       type="number"
                       onChange={(e) =>
                         setCounterDetails({
@@ -224,7 +230,7 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
                         })
                       }
                       min="0"
-                      className="w-full px-3 py-2 text-black text-[14px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5534a5] focus:border-[#5534a5]"
+                      className="w-full mt-1 px-3 py-2 text-black text-[14px] border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5534a5] focus:border-[#5534a5]"
                     />
                   </div>
                 </div>
@@ -304,7 +310,7 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
 
                 <div className="flex justify-between mt-1">
                   <button
-                    className="text-[#5534A5] border-[1px] rounded-full border-[#5534A5] hover:bg-[#957cd0] hover:text-white transition px-5 text-[18px] ml-20 mt-1"
+                    className="text-[#5534A5] border-[1px] disabled:cursor-not-allowed rounded-full border-[#5534A5] hover:bg-[#957cd0] hover:text-white transition px-5 text-[18px] ml-20 mt-1"
                     disabled={loader || !exerciseType}
                     onClick={(e) => {
                       const newType = dailyPlanExercise;
@@ -333,11 +339,11 @@ function FitnessPlan({ planData, setPlanData, email, password }) {
                     Add
                   </button>
                   <button
-                    className="text-[black] border-[1px] rounded-full border-black hover:bg-[#878689] hover:text-white transition px-5 text-[18px] mr-20 mt-1"
+                    className="text-[black] disabled:cursor-not-allowed border-[1px] rounded-full border-black hover:bg-[#878689] hover:text-white transition px-5 text-[18px] mr-20 mt-1"
                     onClick={(e) => {
                       setShowWidget(false);
                     }}
-                    disabled={loader || !exerciseType}
+                    disabled={loader}
                   >
                     Close
                   </button>

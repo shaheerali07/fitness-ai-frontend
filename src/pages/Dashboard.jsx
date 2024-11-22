@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import PuffLoader from "react-spinners/PuffLoader";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import ChangePasswordModal from "../component/changePassword/changePassword";
 import MainBox from "../component/mainbox";
 import Onboarding from "../component/onboarding/onboarding";
 import SideBar from "../component/sidebar";
 import api from "../service/axios";
+import { ExerciseProvider } from "../store/state.provider";
 
 function Dashboard() {
   const [user, setUser] = useState(null);
@@ -36,13 +37,13 @@ function Dashboard() {
           }
         } else {
           setLoading(false);
-          toastr.error("Email or password is not correct.");
+          toast.error("Email or password is not correct.");
           window.location.replace("/login");
         }
       })
       .catch((err) => {
         setLoading(false);
-        toastr.error(
+        toast.error(
           err?.response?.data?.message ??
             "Something went wrong. Please try again."
         );
@@ -63,15 +64,15 @@ function Dashboard() {
   //     .post("/admin/signupUpdate", { updateData })
   //     .then((res) => {
   //       if (res.data.message === "success") {
-  //         toastr.success("User updated successfully!");
+  //         toast.success("User updated successfully!");
   //         setShowModal(false); // Close the modal after successful submission
   //       } else {
-  //         toastr.error("Failed to update user.");
+  //         toast.error("Failed to update user.");
   //       }
   //     })
   //     .catch((err) => {
-  //       toastr.error("An error occurred while updating.");
-  //       toastr.error(
+  //       toast.error("An error occurred while updating.");
+  //       toast.error(
   //         err?.response?.data?.message ??
   //           "Something went wrong. Please try again."
   //       );
@@ -87,15 +88,15 @@ function Dashboard() {
       .post("/admin/changePassword", { updateData })
       .then((res) => {
         if (res.data.message === "success") {
-          toastr.success("Password updated successfully!");
+          toast.success("Password updated successfully!");
           setShowChangePasswordModal(false); // Close the modal after successful submission
         } else {
-          toastr.error("Failed to update user.");
+          toast.error("Failed to update user.");
         }
       })
       .catch((err) => {
-        toastr.error("An error occurred while updating.");
-        toastr.error(
+        toast.error("An error occurred while updating.");
+        toast.error(
           err?.response?.data?.message ??
             "Something went wrong. Please try again."
         );
@@ -113,17 +114,19 @@ function Dashboard() {
               </div>
             ) : (
               <>
-                <SideBar
-                  mainContent={mainContent}
-                  setMainContent={setMainContent}
-                />
-                <MainBox
-                  mainContent={mainContent}
-                  setMainContent={setMainContent}
-                  setShowModal={setShowModal}
-                  setShowChangePasswordModal={setShowChangePasswordModal}
-                  userDetails={user}
-                />
+                <ExerciseProvider>
+                  <SideBar
+                    mainContent={mainContent}
+                    setMainContent={setMainContent}
+                  />
+                  <MainBox
+                    mainContent={mainContent}
+                    setMainContent={setMainContent}
+                    setShowModal={setShowModal}
+                    setShowChangePasswordModal={setShowChangePasswordModal}
+                    userDetails={user}
+                  />
+                </ExerciseProvider>
               </>
             )}
           </div>

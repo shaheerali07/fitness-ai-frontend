@@ -1,13 +1,6 @@
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import * as mediapipePose from "@mediapipe/pose";
-import { Pose } from "@mediapipe/pose";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Confetti from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
 import Webcam from "react-webcam";
@@ -21,6 +14,7 @@ function Camera2({
   stateResultData,
   exerciseResult,
   setExerciseResult,
+  userPose,
 }) {
   const canvasRef = useRef(null);
   const videoRef = useRef(null);
@@ -117,21 +111,6 @@ function Camera2({
     [stateResultData.kind_exercise, state_change_exercise]
   );
 
-  const userPose = useMemo(
-    () =>
-      new Pose({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-      }),
-    []
-  );
-
-  userPose.setOptions({
-    modelComplexity: 1,
-    smoothLandmarks: true,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5,
-  });
   useEffect(() => {
     userPose.onResults(onResults);
     poseRef.current = userPose;
@@ -164,7 +143,8 @@ function Camera2({
     } else if (stateResultData.btnStateStart === false) {
       setTipSpeaker("Let's start Exercise!");
       const currentDay = new Date();
-      const averageAccuracy = sumAccuracy / counter;
+      // const averageAccuracy = sumAccuracy / counter;
+      const averageAccuracy = accuracy;
       const newData = {
         year: currentDay.getFullYear(),
         month: currentDay.getMonth() + 1,
@@ -234,7 +214,7 @@ function Camera2({
       setTipSpeaker("Please, more correctly");
     }
     max_accuracy = 0;
-  }, [counter]);
+  }, [counter, max_accuracy, sumAccuracy]);
 
   useEffect(() => {
     if (!iswebcamEnable || stateResultData.btnStateStart) {
@@ -247,14 +227,16 @@ function Camera2({
       const canvasElement = canvasRef?.current;
       const webcamElement = webcamRef?.current?.video;
       const canvasCtx = canvasElement?.getContext("2d");
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(
-        webcamElement,
-        0,
-        0,
-        canvasElement.width,
-        canvasElement.height
-      );
+      if (canvasCtx) {
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.drawImage(
+          webcamElement,
+          0,
+          0,
+          canvasElement.width,
+          canvasElement.height
+        );
+      }
     }, 50);
     return () => clearInterval(interval);
   }, [iswebcamEnable, stateResultData.btnStateStart]);
@@ -324,7 +306,7 @@ function Camera2({
 
           <div className="flex relative w-[100%] h-[45%] xl:h-[20%] mt-[25vw] xl:mt-[-5%]">
             <button
-              className="flex justify-center items-center ml-[45%] w-[8vw] h-[8vw] mt-[-6%] xl:w-[4vw] xl:h-[4vw] xl:mt-[5%] border rounded-[50%] shadow-xl
+              className="flex disabled:cursor-not-allowed justify-center items-center ml-[45%] w-[8vw] h-[8vw] mt-[-6%] xl:w-[4vw] xl:h-[4vw] xl:mt-[5%] border rounded-[50%] shadow-xl
                         hover:shadow-[0_0_30px_5px_rgba(0,142,236,0.815)] duration-200"
               onClick={async () => {
                 try {

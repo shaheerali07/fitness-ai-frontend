@@ -3,7 +3,7 @@ import parse from "html-react-parser";
 import React, { useEffect, useRef, useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import PuffLoader from "react-spinners/PuffLoader";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../../service/axios";
 
 function FitnessAIChatbot() {
@@ -201,6 +201,57 @@ function FitnessAIChatbot() {
       startOfWeek.setDate(currentMonday.getDate() + 7 * weekOffset); // Adjust for the given week offset (0 = current, 1 = second, etc.)
       return startOfWeek;
     };
+    if (selectedWeek === "lifetime") {
+      // Generate start dates for all weeks in the year
+      const weekStartDates = Array.from({ length: 52 }, (_, index) => {
+        const startOfWeek = getStartOfWeek(index);
+        return new Date(startOfWeek);
+      });
+
+      // Generate payloads for each week
+      return weekStartDates.flatMap((weekStart) =>
+        jsonData.dietPlan.map((dayData, index) => {
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + index); // Adjust to the specific day in the week
+
+          // Organize meal data
+          const meal = {
+            breakfast: dayData["Breakfast"]
+              ? [dayData["Breakfast"].foodName]
+              : [],
+            snack1: dayData["Snack 1"] ? [dayData["Snack 1"].foodName] : [],
+            lunch: dayData["Lunch"] ? [dayData["Lunch"].foodName] : [],
+            snack2: dayData["Snack 2"] ? [dayData["Snack 2"].foodName] : [],
+            dinner: dayData["Dinner"] ? [dayData["Dinner"].foodName] : [],
+          };
+
+          // Organize amount data
+          const amount = {
+            breakfast: meal.breakfast.length > 0 ? ["100"] : [],
+            snack1: meal.snack1.length > 0 ? ["100"] : [],
+            lunch: meal.lunch.length > 0 ? ["100"] : [],
+            snack2: meal.snack2.length > 0 ? ["100"] : [],
+            dinner: meal.dinner.length > 0 ? ["100"] : [],
+          };
+
+          // Payload structure for each day
+          return {
+            header: {
+              email: email,
+              password: password,
+            },
+            updateData: {
+              year: date.getFullYear(),
+              month: date.getMonth() + 1,
+              date: date.getDate(),
+              day: index + 1, // Day of the week: Monday is 1, Tuesday is 2, etc.
+              meal: meal,
+              amount: amount,
+            },
+          };
+        })
+      );
+    }
 
     // Determine the start date based on the selected week
     let startOfWeek;
@@ -337,6 +388,48 @@ function FitnessAIChatbot() {
       startOfWeek.setDate(currentMonday.getDate() + 7 * weekOffset); // Adjust for week offset
       return startOfWeek;
     };
+
+    if (selectedWeek === "lifetime") {
+      // Generate start dates for all weeks in the year
+      const weekStartDates = Array.from({ length: 52 }, (_, index) => {
+        const startOfWeek = getStartOfWeek(index);
+        return new Date(startOfWeek);
+      });
+
+      // Generate payloads for each week
+      return weekStartDates.flatMap((weekStart) =>
+        jsonData.map((dayData, index) => {
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + index); // Set date for each day in the week
+
+          // Gather all exercises for the day in arrays
+          const exerciseNames = ["Warm-up", "Main Exercise", "Cool-down"].map(
+            (exerciseType) => dayData[exerciseType]
+          );
+          const exerciseTimes = exerciseNames.map(() => "-"); // Placeholder for exercise times
+          const exerciseStatus = exerciseNames.map(() => "incomplete"); // Placeholder for exercise status
+
+          // Return a single payload for the day
+          return {
+            header: {
+              email: email,
+              password: password,
+            },
+            updateData: {
+              year: date.getFullYear(),
+              month: date.getMonth() + 1,
+              date: date.getDate(),
+              day: index, // Day of the week: Monday is 0, Tuesday is 1, etc.
+              exerciseType: {
+                exerciseName: exerciseNames,
+                exerciseTime: exerciseTimes,
+                exerciseStatus: exerciseStatus,
+              },
+            },
+          };
+        })
+      );
+    }
 
     // Determine the start date based on the selected week
     let startOfWeek;
@@ -480,10 +573,10 @@ function FitnessAIChatbot() {
           setIsSaveModalOpen(false);
           setSelectedWeek("");
           setMessage(null);
-          toastr.success("Diet data saved successfully!");
+          toast.success("Diet data saved successfully!");
         })
         .catch((error) => {
-          toastr.error("Error saving diet data");
+          toast.error("Error saving diet data");
           console.error("Error saving diet data:", error);
         });
     } else if (message && message.saveType === "exercise") {
@@ -532,10 +625,10 @@ function FitnessAIChatbot() {
           setIsSaveModalOpen(false);
           setSelectedWeek("");
           setMessage(null);
-          toastr.success("Exercise data saved successfully!");
+          toast.success("Exercise data saved successfully!");
         })
         .catch((error) => {
-          toastr.error("Error saving exercise data");
+          toast.error("Error saving exercise data");
           console.error("Error saving exercise data:", error);
         });
     } else {
@@ -573,6 +666,7 @@ function FitnessAIChatbot() {
                 <option value="thirdWeek">
                   Third Week ({getWeekDates(3).start} - {getWeekDates(3).end})
                 </option>
+                {/* <option value="lifetime">Repeat (Whole Year)</option> */}
               </select>
             </div>
 
@@ -587,7 +681,7 @@ function FitnessAIChatbot() {
             </div>
 
             {/* Close Button */}
-            <div className="absolute top-0 right-1">
+            <div className="absolute top-[2px] right-[3px]">
               <button
                 onClick={() => {
                   setIsSaveModalOpen(false);
@@ -652,7 +746,7 @@ function FitnessAIChatbot() {
                 {/* Conditionally render the save button if message.shouldSave is true */}
                 {message.shouldSave && (
                   <button
-                    className="absolute bottom-[2px] left-[45%] bg-[#5534a5] hover:bg-[#4c2f8b] transition text-white text-xs px-2 py-1 rounded "
+                    className="absolute disabled:cursor-not-allowed bottom-[2px] left-[45%] bg-[#5534a5] hover:bg-[#4c2f8b] transition text-white text-xs px-2 py-1 rounded "
                     onClick={() => handleSaveMessage(message)}
                     disabled={loading}
                   >
@@ -670,7 +764,7 @@ function FitnessAIChatbot() {
             onClick={() => handlePromptClick("Suggest me diet plans")}
             style={{ border: "2px solid #5534a5" }}
             disabled={loading}
-            className="px-3 text-[17px] py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+            className="px-3 disabled:cursor-not-allowed text-[17px] py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
           >
             Suggest me diet plans
           </button>
@@ -678,7 +772,7 @@ function FitnessAIChatbot() {
             style={{ border: "2px solid #5534a5" }}
             disabled={loading}
             onClick={() => handlePromptClick("Suggest me exercise plans")}
-            className="px-3 text-[17px] py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
+            className="px-3 disabled:cursor-not-allowed text-[17px] py-1 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
           >
             Suggest me exercise plans
           </button>
@@ -697,7 +791,7 @@ function FitnessAIChatbot() {
           <button
             disabled={loading}
             onClick={handleSend}
-            className="ml-4 px-4 py-2 bg-[#5534a5] hover:bg-[#4c2f8b] transition text-base text-white rounded-lg"
+            className="ml-4 disabled:cursor-not-allowed px-4 py-2 bg-[#5534a5] hover:bg-[#4c2f8b] transition text-base text-white rounded-lg"
           >
             {loading ? <PuffLoader size={20} color={"#fff"} /> : "Send"}
           </button>

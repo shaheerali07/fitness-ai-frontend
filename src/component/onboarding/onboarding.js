@@ -1,10 +1,10 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import toastr from "toastr";
 import * as yup from "yup";
 
 import PuffLoader from "react-spinners/PuffLoader";
+import { toast } from "react-toastify";
 import api from "../../service/axios";
 import ActivityLevel from "./components/ActivityLevel";
 import BasicInfo from "./components/BasicInfo";
@@ -168,7 +168,7 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
 
     if (!isValid) {
       await methods.trigger(); // Triggers validation for all fields
-      toastr.error("Please fill all the required fields.");
+      toast.error("Please fill all the required fields.");
     }
 
     return isValid;
@@ -188,7 +188,7 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
 
   const onSubmit = (data) => {
     if (data.agreeTerms === false) {
-      toastr.error("Please agree to the terms and conditions.");
+      toast.error("Please agree to the terms and conditions.");
       return;
     }
     setLoading(true);
@@ -201,18 +201,18 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
       .then((res) => {
         if (res.data.message === "success") {
           setLoading(false);
-          toastr.success("User updated successfully!");
+          toast.success("User updated successfully!");
           setShowModal(false); // Close the modal after successful submission
           fetchUserByEmail();
         } else {
           setLoading(false);
-          toastr.error("Failed to update user.");
+          toast.error("Failed to update user.");
         }
       })
       .catch((err) => {
         setLoading(false);
-        toastr.error("An error occurred while updating.");
-        toastr.error(
+        toast.error("An error occurred while updating.");
+        toast.error(
           err?.response?.data?.message ??
             "Something went wrong. Please try again."
         );

@@ -9,6 +9,7 @@ import TotalTime from "./totaltime";
 
 function FitnessAnalytics({ email, password }) {
   const [user, setUser] = useState(null);
+
   const fetchUserByEmail = () => {
     api
       .get("/admin/getUserByEmail", {
@@ -28,6 +29,7 @@ function FitnessAnalytics({ email, password }) {
 
   useEffect(() => {
     fetchUserByEmail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [planData, setPlanData] = useState({

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import PuffLoader from "react-spinners/PuffLoader";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../service/axios";
 import { loginUser } from "../utils/auth";
 
@@ -36,7 +36,7 @@ const SignupScreen = () => {
       const newData = res.data;
       if (newData.message === "success") {
         setLoading(false);
-        toastr.success("Signup successful, welcome to fitness!");
+        toast.success("Signup successful, welcome to fitness!");
         // Optionally log the user in after signup
         await loginUser({
           email: data.email,
@@ -47,12 +47,12 @@ const SignupScreen = () => {
       } else {
         setLoading(false);
 
-        toastr.error("Signup failed, please try again.");
+        toast.error("Signup failed, please try again.");
       }
     } catch (err) {
       setLoading(false);
       console.error("Error during signup: ", err);
-      toastr.error(
+      toast.error(
         err?.response?.data?.message ??
           "Something went wrong. Please try again."
       );

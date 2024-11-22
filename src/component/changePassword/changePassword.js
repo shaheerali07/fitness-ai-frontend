@@ -176,7 +176,7 @@ const ChangePasswordModal = ({ onClose, onSubmit, userDetails }) => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full !bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+            className="w-full !bg-[#5534a5] text-white p-3 rounded-lg hover:bg-[#4c2f8b] transition-colors duration-200"
           >
             Change Password
           </button>

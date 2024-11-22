@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { ExerciseContext } from "../../store/state.provider";
 
 function CircularProgressWithLabel(props) {
   return (
@@ -11,6 +12,9 @@ function CircularProgressWithLabel(props) {
         {...props}
         size={120}
         thickness={4}
+        sx={{
+          color: "#a85cf9",
+        }}
       />
       <Box
         sx={{
@@ -36,37 +40,7 @@ function CircularProgressWithLabel(props) {
 }
 
 export default function CircularWithValueLabel() {
-  const [progress, setProgress] = React.useState(0);
-
-  // React.useEffect(() => {
-  //   const fetchCompletedPercentage = async () => {
-  //     try {
-  //       const { startDate, endDate } = getWeekStartAndEnd();
-
-  //       const { data } = await api.get(
-  //         "/exercise/getCompletedExercisePercentage",
-  //         {
-  //           params: {
-  //             startDate,
-  //             endDate,
-  //           },
-  //         }
-  //       );
-  //       if (data && data.overallCompletionPercentage) {
-  //         setProgress(
-  //           isNaN(data.overallCompletionPercentage)
-  //             ? 0
-  //             : parseInt(data.overallCompletionPercentage)
-  //         );
-  //       } else {
-  //         console.log("Error fetching completed percentage");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching exercise stats:", error);
-  //     }
-  //   };
-  //   fetchCompletedPercentage();
-  // }, []);
+  const { progress } = React.useContext(ExerciseContext);
 
   return <CircularProgressWithLabel value={progress} />;
 }
