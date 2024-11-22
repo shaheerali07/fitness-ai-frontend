@@ -1,6 +1,7 @@
 // src/App.js
 import { Analytics } from "@vercel/analytics/react";
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import {
   Navigate,
   Route,
@@ -36,6 +37,14 @@ function App() {
   }
   return (
     <>
+      <Helmet>
+        <title>Fitness AI Dashboard</title>
+        <meta
+          name="description"
+          content="Analyze and track your fitness progress with customized exercise and dietary plans."
+        />
+        <link rel="icon" href="fitness-logo.png" />
+      </Helmet>
       <ToastContainer
         position="top-right"
         autoClose={5000}

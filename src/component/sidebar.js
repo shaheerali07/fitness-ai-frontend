@@ -35,7 +35,7 @@ function SideBar({ mainContent, setMainContent }) {
 
   return (
     <>
-      <div className="flex flex-col justify-center w-[0%] xl:w-[22%] xl:w-[20%] h-[100%] z-1">
+      <div className="flex flex-col justify-center w-[0%] xl:w-[22%]  h-[100%] z-1">
         <button
           className="absolute top-[30px] left-[0px] block xl:hidden"
           onClick={(e) => {
