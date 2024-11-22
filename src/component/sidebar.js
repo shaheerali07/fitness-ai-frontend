@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 function SideBar({ mainContent, setMainContent }) {
   const [showSideBarState, setSideBar] = useState(true);
   const [accidentID, setAccidentID] = useState(0);
@@ -14,7 +14,9 @@ function SideBar({ mainContent, setMainContent }) {
 
   useEffect(() => {
     setSideBar(mainContent.showSideBar);
-    if (mainContent.sideBar === 0) setAccidentID(0);
+    if (mainContent.sideBar === 0) {
+      setAccidentID(0);
+    }
   }, [mainContent]);
 
   const setHandle = (index) => {
@@ -27,7 +29,7 @@ function SideBar({ mainContent, setMainContent }) {
       const newData = { ...mainContent, sideBar: index };
       setMainContent(newData);
     } else {
-      toastr.info("please Log in!");
+      toast.info("please Log in!");
     }
   };
 

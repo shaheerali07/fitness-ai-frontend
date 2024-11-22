@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../../service/axios";
 function Support() {
   const [hoverState, setHoverState] = useState(false);
@@ -24,7 +24,7 @@ function Support() {
       .then((res) => {
         if (res.data.message === "success") {
           setFeedBackContent("");
-          toastr.success("You sent feedback");
+          toast.success("You sent feedback");
         }
       });
   };

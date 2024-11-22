@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { ExerciseContext } from "../store/state.provider.js";
 import Analytics from "./analytics/analytics.js";
 import Diet from "./diet/diet.js";
 import FitnessAIChatbot from "./fitness_ai/fitnessAI.js";
@@ -13,6 +14,7 @@ function MainBox({
   setShowChangePasswordModal,
   userDetails,
 }) {
+  const { refetch } = useContext(ExerciseContext);
   const [headerContent, setHeaderContent] = useState({
     email: "",
     password: "",
@@ -30,10 +32,16 @@ function MainBox({
       };
       setMainContent(newData);
     }
+    if (sideBarIndex > 0) {
+      refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sideBarIndex]);
 
   const setSideBarState = () => {
-    if (!mainContent.showSideBar) return;
+    if (!mainContent.showSideBar) {
+      return;
+    }
     const newData = {
       ...mainContent,
       showSideBar: !mainContent.showSideBar,

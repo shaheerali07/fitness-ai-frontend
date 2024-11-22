@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import PuffLoader from "react-spinners/PuffLoader";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../service/axios";
 import { loginUser } from "../utils/auth";
 const LoginScreen = () => {
@@ -37,13 +37,13 @@ const LoginScreen = () => {
       } else {
         setLoading(false);
         setError(true);
-        toastr.error("Email or password is not correct");
+        toast.error("Email or password is not correct");
       }
     } catch (err) {
       setLoading(false);
-      toastr.error(
+      toast.error(
         err?.response?.data?.message ??
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
   };

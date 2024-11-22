@@ -5,7 +5,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 import { useLocation } from "react-router-dom";
 import PuffLoader from "react-spinners/PuffLoader";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../service/axios";
 
 const ResetPasswordScreen = () => {
@@ -31,19 +31,19 @@ const ResetPasswordScreen = () => {
 
       if (res.status === 200) {
         setLoading(false);
-        toastr.success("Password reset successfully!");
+        toast.success("Password reset successfully!");
         window.location.replace("/login"); // Optionally, navigate the user to the login page after resetting password
         // Optionally, navigate the user to the login page after resetting password
       } else {
         setLoading(false);
-        toastr.error("Password reset failed. Please try again.");
+        toast.error("Password reset failed. Please try again.");
       }
     } catch (err) {
       setLoading(false);
       console.error("Error during password reset: ", err);
-      toastr.error(
+      toast.error(
         err?.response?.data?.message ??
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
   };

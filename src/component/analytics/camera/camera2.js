@@ -1,13 +1,6 @@
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import * as mediapipePose from "@mediapipe/pose";
-import { Pose } from "@mediapipe/pose";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Confetti from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
 import Webcam from "react-webcam";
@@ -21,6 +14,7 @@ function Camera2({
   stateResultData,
   exerciseResult,
   setExerciseResult,
+  userPose,
 }) {
   const canvasRef = useRef(null);
   const videoRef = useRef(null);
@@ -63,7 +57,7 @@ function Camera2({
         0,
         0,
         canvasElement.width,
-        canvasElement.height
+        canvasElement.height,
       );
 
       if (results.poseLandmarks) {
@@ -71,7 +65,7 @@ function Camera2({
           canvasCtx,
           results.poseLandmarks,
           mediapipePose.POSE_CONNECTIONS,
-          { color: "aqua", lineWidth: 1.5 }
+          { color: "aqua", lineWidth: 1.5 },
         );
 
         drawLandmarks(
@@ -83,7 +77,7 @@ function Camera2({
             lineWidth: 0.1,
             fillColor: "aqua",
             radius: "1",
-          }
+          },
         );
       }
 
@@ -96,8 +90,9 @@ function Camera2({
             landmark[i].x < 0 ||
             landmark[i].y > 1 ||
             landmark[i].y < 0
-          )
+          ) {
             state_pose = false;
+          }
         }
 
         if (state_pose === true) {
@@ -114,31 +109,18 @@ function Camera2({
         }
       }
     },
-    [stateResultData.kind_exercise, state_change_exercise]
+    [stateResultData.kind_exercise, state_change_exercise],
   );
 
-  const userPose = useMemo(
-    () =>
-      new Pose({
-        locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
-      }),
-    []
-  );
-
-  userPose.setOptions({
-    modelComplexity: 1,
-    smoothLandmarks: true,
-    minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5,
-  });
   useEffect(() => {
     userPose.onResults(onResults);
     poseRef.current = userPose;
   }, [onResults, userPose]);
 
   useEffect(() => {
-    if (!iswebcamEnable) return;
+    if (!iswebcamEnable) {
+      return;
+    }
     if (stateResultData.btnStateStart === true) {
       videoRef.current.play();
       var myTime = setInterval(() => {
@@ -148,7 +130,9 @@ function Camera2({
         if (iswebcamEnable) {
           const video = webcamRef.current.video;
           // const video = videoRef.current;
-          if (video) poseRef.current.send({ image: video });
+          if (video) {
+            poseRef.current.send({ image: video });
+          }
         }
       }, 100);
       return () => {
@@ -164,7 +148,8 @@ function Camera2({
     } else if (stateResultData.btnStateStart === false) {
       setTipSpeaker("Let's start Exercise!");
       const currentDay = new Date();
-      const averageAccuracy = sumAccuracy / counter;
+      // const averageAccuracy = sumAccuracy / counter;
+      const averageAccuracy = accuracy;
       const newData = {
         year: currentDay.getFullYear(),
         month: currentDay.getMonth() + 1,
@@ -189,8 +174,11 @@ function Camera2({
     const index = stateResultData.kind_exercise.index;
     setUnrealVideoUrl(`video/${index}/${category}/${exercise}.mp4`);
     // setUnrealVideoUrl(`video/Exercise_2/Stretches/abdominal-stretch.mp4`)
-    if (state_change_exercise === true) setState_Change_Exercise(false);
-    else if (state_change_exercise === false) setState_Change_Exercise(true);
+    if (state_change_exercise === true) {
+      setState_Change_Exercise(false);
+    } else if (state_change_exercise === false) {
+      setState_Change_Exercise(true);
+    }
   }, [stateResultData.kind_exercise]);
 
   useEffect(() => {
@@ -234,7 +222,7 @@ function Camera2({
       setTipSpeaker("Please, more correctly");
     }
     max_accuracy = 0;
-  }, [counter]);
+  }, [counter, max_accuracy, sumAccuracy]);
 
   useEffect(() => {
     if (!iswebcamEnable || stateResultData.btnStateStart) {
@@ -247,14 +235,16 @@ function Camera2({
       const canvasElement = canvasRef?.current;
       const webcamElement = webcamRef?.current?.video;
       const canvasCtx = canvasElement?.getContext("2d");
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(
-        webcamElement,
-        0,
-        0,
-        canvasElement.width,
-        canvasElement.height
-      );
+      if (canvasCtx) {
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.drawImage(
+          webcamElement,
+          0,
+          0,
+          canvasElement.width,
+          canvasElement.height,
+        );
+      }
     }, 50);
     return () => clearInterval(interval);
   }, [iswebcamEnable, stateResultData.btnStateStart]);
@@ -324,7 +314,7 @@ function Camera2({
 
           <div className="flex relative w-[100%] h-[45%] xl:h-[20%] mt-[25vw] xl:mt-[-5%]">
             <button
-              className="flex justify-center items-center ml-[45%] w-[8vw] h-[8vw] mt-[-6%] xl:w-[4vw] xl:h-[4vw] xl:mt-[5%] border rounded-[50%] shadow-xl
+              className="flex disabled:cursor-not-allowed justify-center items-center ml-[45%] w-[8vw] h-[8vw] mt-[-6%] xl:w-[4vw] xl:h-[4vw] xl:mt-[5%] border rounded-[50%] shadow-xl
                         hover:shadow-[0_0_30px_5px_rgba(0,142,236,0.815)] duration-200"
               onClick={async () => {
                 try {

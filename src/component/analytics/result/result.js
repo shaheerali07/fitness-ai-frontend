@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import toastr from "toastr";
+import { toast } from "react-toastify";
 import api from "../../../service/axios";
 import "./Result.css";
 import { kind_select } from "./select_kind_exercise";
@@ -29,9 +29,11 @@ function Result({
   const [exercises, setExercises] = useState([]);
 
   const setSaveExercise = (e) => {
-    if (!exerciseResult.durtime) return;
+    if (!exerciseResult.durtime) {
+      return;
+    }
     const selectedKind = kind_select.kinds.find(
-      (kind) => kind.category === number_category
+      (kind) => kind.category === number_category,
     );
     exerciseResult.category = number_category;
     exerciseResult.exercise = number_subcategory;
@@ -39,6 +41,7 @@ function Result({
     if (selectedKind.category === "GYM EXERCISES") {
       exerciseResult.exercise = number_exercise;
     }
+    exerciseResult.hour = exerciseResult.durtime;
     const header = {
       email: localStorage.getItem("fitnessemail"),
       password: localStorage.getItem("fitnesspassword"),
@@ -46,8 +49,9 @@ function Result({
     api
       .post("/exercise/setlogs", { header, updateData: exerciseResult })
       .then((res) => {
-        if (res.data.message === "success")
-          toastr.success("Saved successfully!");
+        if (res.data.message === "success") {
+          toast.success("Saved successfully!");
+        }
       });
   };
   useEffect(() => {
@@ -64,7 +68,7 @@ function Result({
     // Load subcategories based on the selected category
     if (number_category) {
       const selectedKind = kind_select.kinds.find(
-        (kind) => kind.category === number_category
+        (kind) => kind.category === number_category,
       );
       if (selectedKind && typeof selectedKind.exercises === "object") {
         if (selectedKind.category === "GYM EXERCISES") {
@@ -82,7 +86,7 @@ function Result({
     // Load exercises based on the selected subcategory
     if (number_category && number_subcategory) {
       const selectedKind = kind_select.kinds.find(
-        (kind) => kind.category === number_category
+        (kind) => kind.category === number_category,
       );
       if (selectedKind && selectedKind.exercises[number_subcategory]) {
         setExercises(selectedKind.exercises[number_subcategory]);
@@ -94,7 +98,7 @@ function Result({
     // Load video whenever category, subcategory, or exercise changes
     if (number_category && number_subcategory) {
       const selectedKind = kind_select.kinds.find(
-        (kind) => kind.category === number_category
+        (kind) => kind.category === number_category,
       );
       if (selectedKind.category === "GYM EXERCISES") {
         return;
@@ -124,7 +128,7 @@ function Result({
     // Load video whenever category, subcategory, or exercise changes
     if (number_category && number_subcategory && number_exercise) {
       const selectedKind = kind_select.kinds.find(
-        (kind) => kind.category === number_category
+        (kind) => kind.category === number_category,
       );
       let params = {
         category: number_category,
@@ -181,13 +185,13 @@ function Result({
         </video>
         <div className="flex flex-col xl:flex-row justify-center items-center w-[80%] h-[100%] xl:w-[100%]">
           <button
-            className="w-[90%] h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
+            className="w-[90%] disabled:cursor-not-allowed h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
             onClick={setSaveExercise}
           >
             Save
           </button>
           <button
-            className="w-[90%] h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
+            className="w-[90%] h-[30%] disabled:cursor-not-allowed mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
             onClick={() => {
               if (iswebcamEnable) {
                 if (!number_subcategory) {
@@ -196,7 +200,7 @@ function Result({
                 }
                 setIsSelectDisabled(!isSelectDisabled);
                 const selectedKind = kind_select.kinds.find(
-                  (kind) => kind.category === number_category
+                  (kind) => kind.category === number_category,
                 );
                 let new_data = {
                   ...stateResultData,
@@ -226,7 +230,7 @@ function Result({
       <select
         ref={selectCategoryRef}
         disabled={isSelectDisabled}
-        className="form-control"
+        className="form-control disabled:cursor-not-allowed"
         style={{ width: "80%", marginTop: "2vw" }}
         onChange={(e) => {
           setNumberCategory(e.target.value);
@@ -246,7 +250,7 @@ function Result({
         <select
           ref={selectSubcategoryRef}
           disabled={isSelectDisabled}
-          className="form-control"
+          className="form-control disabled:cursor-not-allowed"
           style={{ width: "80%", marginTop: "2vw" }}
           onChange={(e) => setNumberSubcategory(e.target.value)}
         >
@@ -264,7 +268,7 @@ function Result({
         <select
           ref={selectExerciseRef}
           disabled={isSelectDisabled}
-          className="form-control"
+          className="form-control disabled:cursor-not-allowed"
           style={{ width: "80%", marginTop: "2vw" }}
           onChange={(e) => setNumberExercise(e.target.value)}
         >

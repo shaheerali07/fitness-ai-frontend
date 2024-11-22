@@ -9,7 +9,7 @@ function DietCalendar({ dietPlan, setDietPlan, btnEnable, setBtnEnable }) {
   const year = [];
   const month = [];
   const date = [];
-
+  console.log(accidentID);
   // Ensure the Monday of the current week is correctly set
   const monday = new Date(today);
   monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); // Adjust if today is Sunday
@@ -42,16 +42,16 @@ function DietCalendar({ dietPlan, setDietPlan, btnEnable, setBtnEnable }) {
           <button
             disabled={btnEnable}
             className={`flex justify-center items-center w-[40%] h-[70%] ${
-              index === accidentID ? "bg-[#5534A5]" : "bg-[white]"
+              index + 1 === accidentID ? "bg-[#5534A5]" : "bg-[white]"
             } border rounded-lg mr-1 ml-1 duration-500 hover:shadow-2xl min-[300px]:mt-[2%]`}
             onClick={(e) => {
-              setAccidentID(index);
+              setAccidentID(index + 1);
               const newData = {
                 ...dietPlan,
                 year: year[index],
                 month: month[index],
                 date: date[index],
-                day: index,
+                day: index + 1,
               };
               setDietPlan(newData);
               setBtnEnable(true);
@@ -64,14 +64,14 @@ function DietCalendar({ dietPlan, setDietPlan, btnEnable, setBtnEnable }) {
             >
               <p
                 className={`${
-                  index === accidentID ? "text-[white]" : "text-[#5534A5]"
+                  index + 1 === accidentID ? "text-[white]" : "text-[#5534A5]"
                 } mt-[10%] min-[300px]:text-[12px] min-[720px]:text-[12px] min-[1500px]:text-[20px]`}
               >
                 {month[index] + "/" + date[index]}
               </p>
               <p
                 className={`${
-                  index === accidentID ? "text-[white]" : "text-[#5534A5]"
+                  index + 1 === accidentID ? "text-[white]" : "text-[#5534A5]"
                 } text-[25px] mt-[-10%] min-[300px]:text-[15px] min-[720px]:text-[15px] min-[1500px]:text-[25px]`}
               >
                 {item}

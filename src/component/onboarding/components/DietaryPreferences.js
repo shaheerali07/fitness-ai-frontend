@@ -92,10 +92,10 @@ const DietaryPreferences = () => {
                       checked={field.value.includes("Lactose intolerant")}
                       onChange={() => {
                         const newValue = field.value.includes(
-                          "Lactose intolerant"
+                          "Lactose intolerant",
                         )
                           ? field.value.filter(
-                              (v) => v !== "Lactose intolerant"
+                              (v) => v !== "Lactose intolerant",
                             )
                           : [...field.value, "Lactose intolerant"];
                         field.onChange(newValue);
@@ -112,10 +112,10 @@ const DietaryPreferences = () => {
                       checked={field.value.includes("No specific preference")}
                       onChange={() => {
                         const newValue = field.value.includes(
-                          "No specific preference"
+                          "No specific preference",
                         )
                           ? field.value.filter(
-                              (v) => v !== "No specific preference"
+                              (v) => v !== "No specific preference",
                             )
                           : [...field.value, "No specific preference"];
                         field.onChange(newValue);

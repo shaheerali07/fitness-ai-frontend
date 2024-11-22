@@ -30,6 +30,14 @@ function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
       protein: [],
       water: [],
       mineral: [],
+      carbohydrate: [],
+    },
+    status: {
+      breakfast: ["incomplete"],
+      lunch: ["incomplete"],
+      dinner: ["incomplete"],
+      snack1: ["incomplete"],
+      snack2: ["incomplete"],
     },
   });
 
@@ -37,8 +45,10 @@ function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
     setdietCal(dietPlan);
   }, [dietPlan]);
 
-  useEffect(() => {
-    if (dietPlan.year === "") return;
+  const fetchDietPlan = async () => {
+    if (dietPlan.year === "") {
+      return;
+    }
 
     const localEmail = localStorage.getItem("fitnessemail");
     const localPassword = localStorage.getItem("fitnesspassword");
@@ -53,74 +63,99 @@ function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
       date: dietPlan.date,
       day: dietPlan.day,
     };
-    api
-      .get("/diet/getdiet", {
+
+    try {
+      const res = await api.get("/diet/getdiet", {
         params: {
           header: header,
           getData: getData,
         },
-      })
-      .then((res) => {
-        setBtnEnable(false);
-        const message = res.data.message;
-        const result = res.data.result;
-        if (message === "success") {
-          const newData = {
-            ...dietPlan,
-            food: {
-              breakfast: result.plandiet.meal.breakfast,
-              lunch: result.plandiet.meal.lunch,
-              dinner: result.plandiet.meal.dinner,
-              snack1: result.plandiet.meal.snack1,
-              snack2: result.plandiet.meal.snack2,
-            },
-            amount: {
-              breakfast: result.plandiet.amount.breakfast,
-              lunch: result.plandiet.amount.lunch,
-              dinner: result.plandiet.amount.dinner,
-              snack1: result.plandiet.amount.snack1,
-              snack2: result.plandiet.amount.snack2,
-            },
-            dietMenu: {
-              foodName: result.dietMenu.foodName,
-              kcal: result.dietMenu.kcal,
-              protein: result.dietMenu.protein,
-              water: result.dietMenu.water,
-              mineral: result.dietMenu.mineral,
-            },
-          };
-          setDietPlan(newData);
-        } else {
-          const newData = {
-            ...dietPlan,
-            food: {
-              breakfast: [],
-              lunch: [],
-              dinner: [],
-              snack1: [],
-              snack2: [],
-            },
-            amount: {
-              breakfast: [],
-              lunch: [],
-              dinner: [],
-              snack1: [],
-              snack2: [],
-            },
-            dietMenu: {
-              foodName: result.dietMenu.foodName,
-              kcal: result.dietMenu.kcal,
-              protein: result.dietMenu.protein,
-              water: result.dietMenu.water,
-              mineral: result.dietMenu.mineral,
-            },
-          };
-          setDietPlan(newData);
-        }
       });
+
+      setBtnEnable(false);
+      const message = res.data.message;
+      const result = res.data.result;
+
+      if (message === "success") {
+        const newData = {
+          ...dietPlan,
+          id: result.plandiet._id,
+          food: {
+            breakfast: result.plandiet.meal.breakfast,
+            lunch: result.plandiet.meal.lunch,
+            dinner: result.plandiet.meal.dinner,
+            snack1: result.plandiet.meal.snack1,
+            snack2: result.plandiet.meal.snack2,
+          },
+          amount: {
+            breakfast: result.plandiet.amount.breakfast,
+            lunch: result.plandiet.amount.lunch,
+            dinner: result.plandiet.amount.dinner,
+            snack1: result.plandiet.amount.snack1,
+            snack2: result.plandiet.amount.snack2,
+          },
+          status: {
+            breakfast: result.plandiet.status.breakfast,
+            lunch: result.plandiet.status.lunch,
+            dinner: result.plandiet.status.dinner,
+            snack1: result.plandiet.status.snack1,
+            snack2: result.plandiet.status.snack2,
+          },
+          dietMenu: {
+            foodName: result.dietMenu.foodName,
+            kcal: result.dietMenu.kcal,
+            protein: result.dietMenu.protein,
+            water: result.dietMenu.water,
+            mineral: result.dietMenu.mineral,
+            carbohydrate: result.dietMenu.carbohydrate,
+          },
+        };
+        setDietPlan(newData);
+      } else {
+        const newData = {
+          ...dietPlan,
+          food: {
+            breakfast: [],
+            lunch: [],
+            dinner: [],
+            snack1: [],
+            snack2: [],
+          },
+          amount: {
+            breakfast: [],
+            lunch: [],
+            dinner: [],
+            snack1: [],
+            snack2: [],
+          },
+          status: {
+            breakfast: ["incomplete"],
+            lunch: ["incomplete"],
+            dinner: ["incomplete"],
+            snack1: ["incomplete"],
+            snack2: ["incomplete"],
+          },
+          dietMenu: {
+            foodName: result.dietMenu.foodName,
+            kcal: result.dietMenu.kcal,
+            protein: result.dietMenu.protein,
+            water: result.dietMenu.water,
+            mineral: result.dietMenu.mineral,
+            carbohydrate: result.dietMenu.carbohydrate,
+          },
+        };
+        setDietPlan(newData);
+      }
+    } catch (error) {
+      console.error("Error fetching diet plan:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDietPlan();
   }, [dietPlan.day]);
   return (
-    <div className="border rounded-xl w-[100%] pb-[20px] mt-[2%] md:mt-[0px]">
+    <div className="border rounded-xl w-[100%] pb-[20px] mt-[2%] ">
       <DietCalendar
         dietPlan={dietPlan}
         setDietPlan={setDietPlan}
@@ -130,6 +165,7 @@ function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
       <DietDaily
         dietPlan={dietPlan}
         setDietPlan={setDietPlan}
+        refetch={fetchDietPlan}
         updateWeeklySignal={updateWeeklySignal}
         setUpdateWeeklySignal={setUpdateWeeklySignal}
       />

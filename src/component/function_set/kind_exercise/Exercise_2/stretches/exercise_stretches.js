@@ -25,8 +25,11 @@ export const abdominal_stretch = (calc_data) => {
   const landmark3 = config.index_landmark.nose;
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = 100 - ((angle_1 - 12) * 100) / 12;
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -61,8 +64,11 @@ export const across_chest_shoulder_stretch = (calc_data) => {
 
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((170 - angle_1) * 100) / 155;
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -97,8 +103,11 @@ export const adductor_dynamic_stretch = (calc_data) => {
 
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = 100 - (angle_1 * 100) / 45;
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -141,8 +150,11 @@ export const adductor_stretch_side_standing = (calc_data) => {
   let accuracy1 = 100 - ((120 - angle_1) * 100) / 105;
   let accuracy2 = ((180 - angle_2) * 100) / 70;
   let accuracy = (accuracy1 + accuracy2) / 2;
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -186,8 +198,11 @@ export const arm_circle = (calc_data) => {
   let accuracy2 = 100 - ((140 - angle_2) * 100) / 80;
   let accuracy = (accuracy1 + accuracy2) / 2;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -226,8 +241,11 @@ export const backhand_raise = (calc_data) => {
 
   let accuracy = (angle_1 * 100) / 30;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -265,8 +283,11 @@ export const standing_gastrocnemius_stretch = (calc_data) => {
 
   let accuracy = 100 - ((170 - angle_1) * 100) / 50;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -312,8 +333,11 @@ export const back_slaps_wrap_around_stretch = (calc_data) => {
   let accuracy2 = ((180 - angle_2) * 100) / 150;
 
   let accuracy = (accuracy1 + accuracy2) / 2;
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -351,8 +375,11 @@ export const backwards_abdominal_stretch = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((180 - angle_1) * 100) / 20;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -398,8 +425,11 @@ export const biceps_stretch_behind_the_back = (calc_data) => {
 
   let accuracy = (accuracy1 + accuracy2) / 2;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -436,8 +466,11 @@ export const boat_stretch = (calc_data) => {
 
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((angle_1 - 50) * 100) / 130;
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -481,8 +514,11 @@ export const butterfly_yoga = (calc_data) => {
   let accuracy2 = 100 - ((180 - angle_2) * 100) / 50;
   let accuracy = (accuracy1 + accuracy2) / 2;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -520,8 +556,11 @@ export const calf_stretch_with_rope = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = 100 - ((150 - angle_1) * 100) / 90;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -559,8 +598,11 @@ export const calves_stretch_on_stairs = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((100 - angle_1) * 100) / 10;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -598,8 +640,11 @@ export const ceiling_look_stretch = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = 100 - ((180 - angle_1) * 100) / 80;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -637,8 +682,11 @@ export const chest_out_hands_behind_hold = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = 100 - ((40 - angle_1) * 100) / 35;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -675,8 +723,11 @@ export const circles_knee_stretch = (calc_data) => {
   let angle_1 = Angle_3d(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((140 - angle_1) * 100) / 50;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -713,8 +764,11 @@ export const cobra_side_abdominal_stretch = (calc_data) => {
   let angle_1 = Angle_3d(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((150 - angle_1) * 100) / 30;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -751,8 +805,11 @@ export const cobra_yoga_pose_hold = (calc_data) => {
   let angle_1 = Angle_3d(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((180 - angle_1) * 100) / 40;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -789,8 +846,11 @@ export const crouching_heel_back_calf_stretch = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = angle_1;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -837,8 +897,11 @@ export const dynamic_arm_swing_back_stretch = (calc_data) => {
 
   let accuracy = (accuracy1 + accuracy2) / 2;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -876,8 +939,11 @@ export const elbow_back_stretch = (calc_data) => {
 
   let accuracy = ((180 - angle_1) * 100) / 20;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -915,8 +981,11 @@ export const fixed_bar_stretch = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((140 - angle_1) * 100) / 40;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -962,8 +1031,11 @@ export const hamstring_lying_curl_up_stretch = (calc_data) => {
   if (angle_1 > 80 && angle_1 < 120) {
     accuracy = 100 - ((180 - angle_2) * 100) / 90;
 
-    if (accuracy > 100) accuracy = 100;
-    else if (accuracy < 0) accuracy = 0;
+    if (accuracy > 100) {
+      accuracy = 100;
+    } else if (accuracy < 0) {
+      accuracy = 0;
+    }
 
     if (accuracy > max_score && state_counter === false) {
       counter = counter + 1;
@@ -1000,8 +1072,11 @@ export const hamstring_lying_straight_leg_stretch = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((180 - angle_1) * 100) / 90;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -1036,8 +1111,11 @@ export const kneeling_hip_flexor_stretch = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = 100 - ((105 - angle_1) * 100) / 10;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -1072,8 +1150,11 @@ export const kneeling_lat_floor_stretch = (calc_data) => {
   let angle_1 = Angle_3_point(pose_data, landmark1, landmark2, landmark3);
   let accuracy = ((70 - angle_1) * 100) / 30;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -1108,8 +1189,11 @@ export const kneeling_wrist_flexor_stretch = (calc_data) => {
 
   let accuracy = ((80 - angle_1) * 100) / 20;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -1145,8 +1229,11 @@ export const knee_to_chest_stretch = (calc_data) => {
 
   let accuracy = ((180 - angle_1) * 100) / 150;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -1189,8 +1276,11 @@ export const leg_extended_stretch = (calc_data) => {
   if (angle_2 > 60 && angle_2 < 130) {
     accuracy = 100 - ((180 - angle_1) * 100) / 80;
 
-    if (accuracy > 100) accuracy = 100;
-    else if (accuracy < 0) accuracy = 0;
+    if (accuracy > 100) {
+      accuracy = 100;
+    } else if (accuracy < 0) {
+      accuracy = 0;
+    }
 
     if (accuracy > max_score && state_counter === false) {
       counter = counter + 1;
@@ -1227,8 +1317,11 @@ export const legs_hand_reach_spine_stretch = (calc_data) => {
 
   let accuracy = ((100 - angle_1) * 100) / 35;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
@@ -1265,8 +1358,11 @@ export const lying_hip_flexor_stretch = (calc_data) => {
 
   let accuracy = ((100 - angle_1) * 100) / 60;
 
-  if (accuracy > 100) accuracy = 100;
-  else if (accuracy < 0) accuracy = 0;
+  if (accuracy > 100) {
+    accuracy = 100;
+  } else if (accuracy < 0) {
+    accuracy = 0;
+  }
 
   if (accuracy > max_score && state_counter === false) {
     counter = counter + 1;
