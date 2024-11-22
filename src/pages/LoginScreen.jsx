@@ -43,7 +43,7 @@ const LoginScreen = () => {
       setLoading(false);
       toast.error(
         err?.response?.data?.message ??
-          "Something went wrong. Please try again.",
+          "Something went wrong. Please try again."
       );
     }
   };

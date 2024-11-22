@@ -42,6 +42,8 @@ const SignupScreen = () => {
           email: data.email,
           password: data.password,
           token: newData.token,
+          id: newData.id,
+          name: newData.name,
         });
         // Redirect to dashboard
       } else {
@@ -54,7 +56,7 @@ const SignupScreen = () => {
       console.error("Error during signup: ", err);
       toast.error(
         err?.response?.data?.message ??
-          "Something went wrong. Please try again.",
+          "Something went wrong. Please try again."
       );
     }
   };

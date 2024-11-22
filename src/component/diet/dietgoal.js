@@ -13,6 +13,8 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
   const [weeklyTotalProteins, setWeeklyTotalProteins] = useState(0);
   const [dailyTotalMinerals, setDailyTotalMinerals] = useState(0);
   const [weeklyTotalMinerals, setWeeklyTotalMinerals] = useState(0);
+  const user = localStorage.getItem("user");
+  const userId = user ? JSON.parse(user).id : "";
   const calc_kcal = (foodName, dietMenu) => {
     return dietMenu.kcal[dietMenu.foodName.indexOf(foodName)];
   };
@@ -209,12 +211,18 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
     const dietMenu = dietCal.dietMenu;
 
     let myTotalKcal = 0;
+
     dialyFoodMenu.map((item, i) => {
       item.map((itx, j) => {
-        myTotalKcal =
-          myTotalKcal + (calc_kcal(itx, dietMenu) * amountMenu[i][j]) / 100;
+        let temp = isNaN(calc_kcal(itx, dietMenu))
+          ? 0
+          : calc_kcal(itx, dietMenu);
+
+        myTotalKcal = myTotalKcal + (temp * amountMenu[i][j]) / 100;
       });
     });
+    console.log(myTotalKcal);
+
     return myTotalKcal;
   };
   const weeklyTotalCalcCarbs = (data) => {
@@ -397,7 +405,7 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
 
     api
       .get("/diet/getWeeklyTotalStats", {
-        params: { startDate, endDate },
+        params: { startDate, endDate, userId },
       })
       .then((res) => {
         if (res.data.message === "success") {
@@ -420,7 +428,6 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
         console.log(err);
       });
   }, [updateWeeklySignal, dietCal]);
-
   return (
     <>
       <DietStats

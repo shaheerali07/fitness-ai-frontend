@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { ExerciseContext } from "../../store/state.provider";
 function TotalTime() {
   const { totalTime, completedPercentage } = useContext(ExerciseContext);
+
   // const [totalTime, setTotalTime] = useState("N/A");
   // const [completedPercentage, setCompletedPercentage] = useState(0);
   // useEffect(() => {
@@ -77,7 +78,7 @@ function TotalTime() {
         <div className="flex flex-col justify-center items-start w-[60%] h-[100%]">
           <p className="text-[#757575] text-[15px] text-left">Total Time</p>
           <p className="text-black text-[14px] text-left">
-            {formatTime(totalTime)}
+            {isNaN(totalTime) ? "N/A" : formatTime(totalTime)}
           </p>
         </div>
       </div>

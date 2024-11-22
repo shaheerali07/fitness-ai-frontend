@@ -28,7 +28,8 @@ export const ExerciseProvider = ({ children }) => {
   const [resultChartDurtime, setResultChartDurtime] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalExercises, setTotalExercises] = useState(0);
-
+  const user = localStorage.getItem("user");
+  const userId = user ? JSON.parse(user).id : "";
   useEffect(() => {
     if (totalExercises) {
       const targetAccuracy = totalExercises * 100;
@@ -43,7 +44,7 @@ export const ExerciseProvider = ({ children }) => {
   const fetchCompletedPercentage = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
     const { data } = await api.get("/exercise/getTotals", {
-      params: { startDate, endDate },
+      params: { startDate, endDate, userId },
     });
     if (data && data.totalCounter) {
       setResultCounter(parseInt(data.totalCounter));
@@ -56,7 +57,7 @@ export const ExerciseProvider = ({ children }) => {
   const fetchTotalTime = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
     const { data } = await api.get("/exercise/getTotalExerciseTime", {
-      params: { startDate, endDate },
+      params: { startDate, endDate, userId },
     });
     if (data && data.totalDuration) {
       setTotalTime(data.totalDuration);
@@ -66,7 +67,7 @@ export const ExerciseProvider = ({ children }) => {
   const fetchCompletedTimePercentage = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
     const { data } = await api.get("/exercise/getCompletedExercisePercentage", {
-      params: { startDate, endDate },
+      params: { startDate, endDate, userId },
     });
     if (data && data.overallCompletionPercentage) {
       setCompletedPercentage(parseInt(data.overallCompletionPercentage));
@@ -76,14 +77,14 @@ export const ExerciseProvider = ({ children }) => {
   const fetchCompletedChartPercentage = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
     const { data } = await api.get("/exercise/getCompletedExercisePercentage", {
-      params: { startDate, endDate },
+      params: { startDate, endDate, userId },
     });
     if (data && data.overallCompletionPercentage) {
       setTotalExercises(parseInt(data.totalExercises));
       setProgress(
         isNaN(data.overallCompletionPercentage)
           ? 0
-          : parseInt(data.overallCompletionPercentage),
+          : parseInt(data.overallCompletionPercentage)
       );
     }
   };
@@ -91,7 +92,7 @@ export const ExerciseProvider = ({ children }) => {
   const fetchExerciseStats = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
     const { data } = await api.get("/exercise/getWeeklyExerciseStats", {
-      params: { startDate, endDate },
+      params: { startDate, endDate, userId },
     });
     const chartData = data.chartData;
     const dates = chartData.map((item) => item.date);
@@ -164,6 +165,7 @@ export const ExerciseProvider = ({ children }) => {
         loading,
         refetch,
         userPose,
+        userId,
       }}
     >
       {children}
