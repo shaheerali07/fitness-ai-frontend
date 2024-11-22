@@ -27,8 +27,12 @@ function Result2({
   const [se_kind_exercise, setKindExercise] = useState([]);
 
   const setSaveExercise = (e) => {
-    if (exerciseResult.durtime === "") return;
-    if (exerciseResult.index === "") return;
+    if (exerciseResult.durtime === "") {
+      return;
+    }
+    if (exerciseResult.index === "") {
+      return;
+    }
     const header = {
       email: localStorage.getItem("fitnessemail"),
       password: localStorage.getItem("fitnesspassword"),
@@ -37,7 +41,9 @@ function Result2({
     api
       .post("/exercise/setlogs", { header: header, updateData: updateData })
       .then((res) => {
-        if (res.data.message === "success") toast.success("Save successfully!");
+        if (res.data.message === "success") {
+          toast.success("Save successfully!");
+        }
       });
   };
   useEffect(() => {
@@ -150,8 +156,11 @@ function Result2({
           <button
             className="w-[90%] h-[30%] mt-2 mb-2 border-solid border-1 border-[#A85CF9] rounded-xl text-[black] hover:bg-[#5534A5] hover:text-[white] duration-300"
             onClick={(e) => {
-              if (isSelectDisabled === true) setIsSelectDisabled(false);
-              else setIsSelectDisabled(true);
+              if (isSelectDisabled === true) {
+                setIsSelectDisabled(false);
+              } else {
+                setIsSelectDisabled(true);
+              }
 
               if (iswebcamEnable === true) {
                 if (stateResultData.btnStateStart === false) {

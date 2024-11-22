@@ -67,7 +67,7 @@ function Camera({
       0,
       0,
       canvasElement.width,
-      canvasElement.height
+      canvasElement.height,
     );
 
     // Draw pose landmarks
@@ -111,7 +111,7 @@ function Camera({
   useEffect(() => {
     const loadPoseLandmarker = async () => {
       const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm",
       );
       const landmarker = await PoseLandmarker.createFromOptions(vision, {
         baseOptions: {
@@ -127,7 +127,9 @@ function Camera({
   }, []);
 
   useEffect(() => {
-    if (!iswebcamEnable) return;
+    if (!iswebcamEnable) {
+      return;
+    }
     if (stateResultData.btnStateStart === true) {
       videoRef.current.play();
       const myTime = setInterval(() => {
@@ -176,8 +178,11 @@ function Camera({
     const exercise = stateResultData.kind_exercise.exercise;
     const index = stateResultData.kind_exercise.index;
     setUnrealVideoUrl(`video/${index}/${category}/${exercise}.mp4`);
-    if (state_change_exercise === true) setState_Change_Exercise(false);
-    else if (state_change_exercise === false) setState_Change_Exercise(true);
+    if (state_change_exercise === true) {
+      setState_Change_Exercise(false);
+    } else if (state_change_exercise === false) {
+      setState_Change_Exercise(true);
+    }
   }, [stateResultData.kind_exercise]);
 
   useEffect(() => {
@@ -202,9 +207,13 @@ function Camera({
   useEffect(() => {
     const newAccuracy = sumAccuracy + max_accuracy;
     setSumAccuracy(newAccuracy);
-    if (max_accuracy > 90) setTipSpeaker("Very good, keep it like this");
-    else if (max_accuracy < 1) setTipSpeaker("Let's Start Exercise");
-    else setTipSpeaker("Please, more correctly");
+    if (max_accuracy > 90) {
+      setTipSpeaker("Very good, keep it like this");
+    } else if (max_accuracy < 1) {
+      setTipSpeaker("Let's Start Exercise");
+    } else {
+      setTipSpeaker("Please, more correctly");
+    }
     max_accuracy = 0;
   }, [counter]);
 

@@ -54,7 +54,7 @@ const SignupScreen = () => {
       console.error("Error during signup: ", err);
       toast.error(
         err?.response?.data?.message ??
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
   };

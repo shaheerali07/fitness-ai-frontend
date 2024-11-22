@@ -14,7 +14,9 @@ function SideBar({ mainContent, setMainContent }) {
 
   useEffect(() => {
     setSideBar(mainContent.showSideBar);
-    if (mainContent.sideBar === 0) setAccidentID(0);
+    if (mainContent.sideBar === 0) {
+      setAccidentID(0);
+    }
   }, [mainContent]);
 
   const setHandle = (index) => {

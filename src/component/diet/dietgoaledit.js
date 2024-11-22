@@ -1,54 +1,57 @@
 import React, { useEffect, useState } from "react";
-import PuffLoader from "react-spinners/PuffLoader";
 import api from "../../service/axios";
 
 function DietGoalEdit(props) {
-  const [targetKcal, setTargetKcal] = useState(0);
+  // const [targetKcal, setTargetKcal] = useState(0);
   const [senderCheck, setSenderCheck] = useState(false);
   const [loader, setLoader] = useState(true);
 
-  const setSaveTargetKcal = () => {
-    const header = {
-      email: localStorage.getItem("fitnessemail"),
-      password: localStorage.getItem("fitnesspassword"),
-    };
-    const updateData = {
-      targetKcal: targetKcal,
-    };
-    setSenderCheck(false);
-    api
-      .post("/diet/settargetkcal", { header: header, updateData: updateData })
-      .then((res) => {
-        setLoader(false);
-        setSenderCheck(true);
-        console.log("ok");
-        props.setTargetKcal(targetKcal);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoader(false);
-      });
-  };
+  // const setSaveTargetKcal = () => {
+  //   const header = {
+  //     email: localStorage.getItem("fitnessemail"),
+  //     password: localStorage.getItem("fitnesspassword"),
+  //   };
+  //   const updateData = {
+  //     targetKcal: targetKcal,
+  //   };
+  //   setSenderCheck(false);
+  //   api
+  //     .post("/diet/settargetkcal", { header: header, updateData: updateData })
+  //     .then((res) => {
+  //       setLoader(false);
+  //       setSenderCheck(true);
+  //       console.log("ok");
+  //       props.setTargetKcal(targetKcal);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setLoader(false);
+  //     });
+  // };
 
   useEffect(() => {
     const header = {
       email: localStorage.getItem("fitnessemail"),
       password: localStorage.getItem("fitnesspassword"),
     };
+    const updateData = {
+      targetKcal: props.targetKcal,
+    };
+    setSenderCheck(false);
     api
-      .get("/diet/gettargetkcal", { params: { header: header } })
+      .post("/diet/settargetkcal", { header: header, updateData: updateData })
       .then((res) => {
         setLoader(false);
-        if (res.data.message === "success") {
-          setTargetKcal(res.data.result.targetKcal);
-          props.setTargetKcal(res.data.result.targetKcal);
-        }
+        // if (res.data.message === "success") {
+        //   setTargetKcal(res.data.result.targetKcal);
+        //   props.setTargetKcal(res.data.result.targetKcal);
+        // }
       })
       .catch((err) => {
         console.log(err);
         setLoader(false);
       });
-  }, []);
+  }, [props.targetKcal]);
 
   return (
     <div
@@ -59,27 +62,21 @@ function DietGoalEdit(props) {
         <img src={props.imgsrc} width="80%"></img>
       </div>
       <div className="flex flex-col ml-[5%] w-[60%]">
-        <p className="text-[#757575] text-[15px] text-left mt-2 mb-2">
+        <p className="text-[#757575] text-[15px] text-left mt-2 mb-1">
           {props.title}
         </p>
         <div className="flex w-[100%] items-center h-[50%] pr-3">
-          <input
-            className="form-control mb-1 text-[10px]"
-            type="number"
-            style={{ width: "50%", fontSize: "15px" }}
-            placeholder="targetKarory"
-            value={targetKcal}
-            onChange={(e) => {
-              setTargetKcal(e.target.value);
-            }}
-          />
-          <button
+          <span className="text-black text-[20px] text-left mt-2 mb-2">
+            {parseInt(props.targetKcal)} Kcal
+          </span>
+
+          {/* <button
             className="ml-3 z-10 text-[black] flex items-center justify-center text-[15px] mt-[-1%] h-[38px] w-[40%] border rounded-md bg-[#F1EEF6] hover:bg-[#5534A5] hover:text-[white] duration-300 "
             onClick={setSaveTargetKcal}
             disabled={loader}
           >
             {loader ? <PuffLoader size={20} /> : "Save"}
-          </button>
+          </button> */}
           <div className="w-[10%] h-[38px]">
             {senderCheck && (
               <img

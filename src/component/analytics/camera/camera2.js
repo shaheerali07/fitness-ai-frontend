@@ -57,7 +57,7 @@ function Camera2({
         0,
         0,
         canvasElement.width,
-        canvasElement.height
+        canvasElement.height,
       );
 
       if (results.poseLandmarks) {
@@ -65,7 +65,7 @@ function Camera2({
           canvasCtx,
           results.poseLandmarks,
           mediapipePose.POSE_CONNECTIONS,
-          { color: "aqua", lineWidth: 1.5 }
+          { color: "aqua", lineWidth: 1.5 },
         );
 
         drawLandmarks(
@@ -77,7 +77,7 @@ function Camera2({
             lineWidth: 0.1,
             fillColor: "aqua",
             radius: "1",
-          }
+          },
         );
       }
 
@@ -90,8 +90,9 @@ function Camera2({
             landmark[i].x < 0 ||
             landmark[i].y > 1 ||
             landmark[i].y < 0
-          )
+          ) {
             state_pose = false;
+          }
         }
 
         if (state_pose === true) {
@@ -108,7 +109,7 @@ function Camera2({
         }
       }
     },
-    [stateResultData.kind_exercise, state_change_exercise]
+    [stateResultData.kind_exercise, state_change_exercise],
   );
 
   useEffect(() => {
@@ -117,7 +118,9 @@ function Camera2({
   }, [onResults, userPose]);
 
   useEffect(() => {
-    if (!iswebcamEnable) return;
+    if (!iswebcamEnable) {
+      return;
+    }
     if (stateResultData.btnStateStart === true) {
       videoRef.current.play();
       var myTime = setInterval(() => {
@@ -127,7 +130,9 @@ function Camera2({
         if (iswebcamEnable) {
           const video = webcamRef.current.video;
           // const video = videoRef.current;
-          if (video) poseRef.current.send({ image: video });
+          if (video) {
+            poseRef.current.send({ image: video });
+          }
         }
       }, 100);
       return () => {
@@ -169,8 +174,11 @@ function Camera2({
     const index = stateResultData.kind_exercise.index;
     setUnrealVideoUrl(`video/${index}/${category}/${exercise}.mp4`);
     // setUnrealVideoUrl(`video/Exercise_2/Stretches/abdominal-stretch.mp4`)
-    if (state_change_exercise === true) setState_Change_Exercise(false);
-    else if (state_change_exercise === false) setState_Change_Exercise(true);
+    if (state_change_exercise === true) {
+      setState_Change_Exercise(false);
+    } else if (state_change_exercise === false) {
+      setState_Change_Exercise(true);
+    }
   }, [stateResultData.kind_exercise]);
 
   useEffect(() => {
@@ -234,7 +242,7 @@ function Camera2({
           0,
           0,
           canvasElement.width,
-          canvasElement.height
+          canvasElement.height,
         );
       }
     }, 50);

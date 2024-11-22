@@ -233,6 +233,13 @@ function FitnessAIChatbot() {
             snack2: meal.snack2.length > 0 ? ["100"] : [],
             dinner: meal.dinner.length > 0 ? ["100"] : [],
           };
+          const status = {
+            breakfast: ["incomplete"],
+            snack1: ["incomplete"],
+            lunch: ["incomplete"],
+            snack2: ["incomplete"],
+            dinner: ["incomplete"],
+          };
 
           // Payload structure for each day
           return {
@@ -247,6 +254,7 @@ function FitnessAIChatbot() {
               day: index + 1, // Day of the week: Monday is 1, Tuesday is 2, etc.
               meal: meal,
               amount: amount,
+              status: status,
             },
           };
         })
@@ -290,7 +298,13 @@ function FitnessAIChatbot() {
         snack2: meal.snack2.length > 0 ? ["100"] : [],
         dinner: meal.dinner.length > 0 ? ["100"] : [],
       };
-
+      const status = {
+        breakfast: ["incomplete"],
+        snack1: ["incomplete"],
+        lunch: ["incomplete"],
+        snack2: ["incomplete"],
+        dinner: ["incomplete"],
+      };
       // Payload structure for each day
       return {
         header: {
@@ -304,6 +318,7 @@ function FitnessAIChatbot() {
           day: index + 1, // Day of the week: Monday is 1, Tuesday is 2, etc.
           meal: meal,
           amount: amount,
+          status: status,
         },
       };
     });
@@ -698,7 +713,11 @@ function FitnessAIChatbot() {
       )}
       <div className="flex flex-col h-[calc(100vh-150px)] rounded-lg bg-gray-100">
         <div className="flex items-center px-4 py-3 rounded-lg bg-gray-200">
-          <img src="Fitness AI.png" alt="ai Avatar" className=" h-10 w-10" />
+          <img
+            src="Fitness AI_active.png"
+            alt="ai Avatar"
+            className=" h-10 w-10"
+          />
           <div className="ml-4 text-lg text-black font-semibold">
             Fitness AI
           </div>

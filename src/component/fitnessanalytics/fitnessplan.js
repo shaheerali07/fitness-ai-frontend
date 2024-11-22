@@ -35,7 +35,9 @@ function FitnessPlan({ planData, setPlanData }) {
     setDailyPlanStatus(planData.exerciseStatus);
   }, [planData]);
   useEffect(() => {
-    if (planData.year === "") return;
+    if (planData.year === "") {
+      return;
+    }
     setLoader(true);
     const localEmail = localStorage.getItem("fitnessemail");
     const localPassword = localStorage.getItem("fitnesspassword");
@@ -377,6 +379,7 @@ function FitnessPlan({ planData, setPlanData }) {
                 <div className="flex mt-2 h-[80%]">
                   <button
                     disabled={loader}
+                    className="shrink-0 mr-2"
                     onClick={(e) => {
                       const newDataType = [];
                       const newDataTime = [];
@@ -401,13 +404,14 @@ function FitnessPlan({ planData, setPlanData }) {
                       src={
                         index === accidentID ? "close_hover.png" : "close.png"
                       }
+                      className="shrink-0"
                       onMouseEnter={() => {
                         setAccidentID(index);
                       }}
                       onMouseLeave={() => {
                         setAccidentID(null);
                       }}
-                      width="35px"
+                      width="26px"
                     />
                   </button>
                 </div>

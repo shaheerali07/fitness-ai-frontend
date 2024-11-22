@@ -20,7 +20,7 @@ const PoseDetection = () => {
   useEffect(() => {
     const loadPoseLandmarker = async () => {
       const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm",
       );
       const landmarker = await PoseLandmarker.createFromOptions(vision, {
         baseOptions: {
@@ -66,7 +66,7 @@ const PoseDetection = () => {
             });
             drawingUtils.drawConnectors(
               landmarks,
-              PoseLandmarker.POSE_CONNECTIONS
+              PoseLandmarker.POSE_CONNECTIONS,
             );
           });
         }

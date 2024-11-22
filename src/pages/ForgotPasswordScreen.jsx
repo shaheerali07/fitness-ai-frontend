@@ -34,7 +34,7 @@ const ForgotPasswordScreen = () => {
       console.error("Error during forgot password: ", err);
       toast.error(
         err?.response?.data?.message ??
-          "Something went wrong. Please try again."
+          "Something went wrong. Please try again.",
       );
     }
   };

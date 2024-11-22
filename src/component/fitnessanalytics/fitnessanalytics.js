@@ -43,7 +43,9 @@ function FitnessAnalytics({ email, password }) {
   });
 
   useEffect(() => {
-    if (planData.year === "") return;
+    if (planData.year === "") {
+      return;
+    }
     const localEmail = localStorage.getItem("fitnessemail");
     const localPassword = localStorage.getItem("fitnesspassword");
     const header = {

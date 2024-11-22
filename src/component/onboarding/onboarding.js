@@ -176,7 +176,9 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
 
   const onNext = async () => {
     const isValid = await validateStep(step);
-    if (!isValid) return;
+    if (!isValid) {
+      return;
+    }
 
     methods.clearErrors();
     setStep((prevStep) => prevStep + 1);
@@ -214,7 +216,7 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
         toast.error("An error occurred while updating.");
         toast.error(
           err?.response?.data?.message ??
-            "Something went wrong. Please try again."
+            "Something went wrong. Please try again.",
         );
       });
   };

@@ -45,7 +45,7 @@ function Dashboard() {
         setLoading(false);
         toast.error(
           err?.response?.data?.message ??
-            "Something went wrong. Please try again."
+            "Something went wrong. Please try again.",
         );
       });
   };
@@ -98,7 +98,7 @@ function Dashboard() {
         toast.error("An error occurred while updating.");
         toast.error(
           err?.response?.data?.message ??
-            "Something went wrong. Please try again."
+            "Something went wrong. Please try again.",
         );
       });
   };

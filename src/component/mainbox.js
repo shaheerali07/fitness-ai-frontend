@@ -39,7 +39,9 @@ function MainBox({
   }, [sideBarIndex]);
 
   const setSideBarState = () => {
-    if (!mainContent.showSideBar) return;
+    if (!mainContent.showSideBar) {
+      return;
+    }
     const newData = {
       ...mainContent,
       showSideBar: !mainContent.showSideBar,

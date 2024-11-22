@@ -83,7 +83,7 @@ export const ExerciseProvider = ({ children }) => {
       setProgress(
         isNaN(data.overallCompletionPercentage)
           ? 0
-          : parseInt(data.overallCompletionPercentage)
+          : parseInt(data.overallCompletionPercentage),
       );
     }
   };
