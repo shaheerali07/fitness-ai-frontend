@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import PuffLoader from "react-spinners/PuffLoader";
 import { toast } from "react-toastify";
@@ -66,7 +66,6 @@ function FitnessPlan({ planData, setPlanData }) {
         setLoader(false);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateSignal]);
   const updateExercisePlan = async (index) => {
     setActiveIndex(index);
@@ -266,7 +265,7 @@ function FitnessPlan({ planData, setPlanData }) {
           <div className="flex flex-col items-center border rounded-xl w-full xl:h-[84%]  pb-[20px]">
             <button
               className="border rounded-[50%] w-[5%] md:w-[3%] xl:w-[5%]  mt-[2%] ml-[80%] text-[black] hover:bg-[#A85CF9] text-[60%]"
-              onClick={(e) => {
+              onClick={() => {
                 showWidget === false
                   ? setShowWidget(true)
                   : setShowWidget(false);
@@ -314,7 +313,7 @@ function FitnessPlan({ planData, setPlanData }) {
                   <button
                     className="text-[#5534A5] border-[1px] disabled:cursor-not-allowed rounded-full border-[#5534A5] hover:bg-[#957cd0] hover:text-white transition px-5 text-[18px] ml-20 mt-1"
                     disabled={loader || !exerciseType}
-                    onClick={(e) => {
+                    onClick={() => {
                       const newType = dailyPlanExercise;
                       newType.push(exerciseType);
                       const newTime = dailyPlanTime;
@@ -342,7 +341,7 @@ function FitnessPlan({ planData, setPlanData }) {
                   </button>
                   <button
                     className="text-[black] disabled:cursor-not-allowed border-[1px] rounded-full border-black hover:bg-[#878689] hover:text-white transition px-5 text-[18px] mr-20 mt-1"
-                    onClick={(e) => {
+                    onClick={() => {
                       setShowWidget(false);
                     }}
                     disabled={loader}
@@ -354,7 +353,10 @@ function FitnessPlan({ planData, setPlanData }) {
             )}
 
             {dailyPlanExercise.map((item, index) => (
-              <div className="flex border w-[94%] md:h-[20%] xl:h-[15%] rounded-xl mt-2 justify-between z-[0]">
+              <div
+                key={index}
+                className="flex border w-[94%] md:h-[20%] xl:h-[15%] rounded-xl mt-2 justify-between z-[0]"
+              >
                 <div className="w-[12px] bg-[#5534A5] rounded-xl" />
                 <div className="flex w-[94%] rounded-xl">
                   <div className="flex flex-col items-start">
@@ -380,7 +382,7 @@ function FitnessPlan({ planData, setPlanData }) {
                   <button
                     disabled={loader}
                     className="shrink-0 mr-2"
-                    onClick={(e) => {
+                    onClick={() => {
                       const newDataType = [];
                       const newDataTime = [];
                       const newDataStaus = [];

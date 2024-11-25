@@ -1,6 +1,6 @@
 // File: ExerciseProvider.jsx
 import { Pose } from "@mediapipe/pose";
-import React, {
+import {
   createContext,
   useCallback,
   useEffect,
@@ -33,7 +33,7 @@ export const ExerciseProvider = ({ children }) => {
   useEffect(() => {
     if (totalExercises) {
       const targetAccuracy = totalExercises * 100;
-      const targetDurtime = totalExercises * 10;
+      const targetDurtime = totalExercises * 3600;
       const targetCounter = totalExercises * 10;
       setProgressAccuracy((resultAccuracy / targetAccuracy) * 100);
       setProgressDurtime((resultDurtime / targetDurtime) * 100);

@@ -280,74 +280,10 @@ function FitnessAIChatbot() {
     });
   }
 
-  // function generateExercisePayloads(jsonData, selectedWeek) {
-  //   const email = localStorage.getItem("fitnessemail");
-  //   const password = localStorage.getItem("fitnesspassword");
-  //   const currentDate = new Date();
-  //   const currentYear = currentDate.getFullYear();
-  //   const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
-
-  //   // Function to get the start date of a specific week
-  //   const getStartOfWeek = (weekOffset) => {
-  //     const dayOfWeek = currentDate.getDay();
-  //     const currentMonday = new Date(currentDate);
-  //     currentMonday.setDate(
-  //       currentDate.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)
-  //     ); // Start of current week (Monday)
-  //     const startOfWeek = new Date(currentMonday);
-  //     startOfWeek.setDate(currentMonday.getDate() + 7 * weekOffset); // Adjust for week offset
-  //     return startOfWeek;
-  //   };
-
-  //   // Determine the start date based on the selected week
-  //   let startOfWeek;
-  //   switch (selectedWeek) {
-  //     case "secondWeek":
-  //       startOfWeek = getStartOfWeek(1); // Second week
-  //       break;
-  //     case "thirdWeek":
-  //       startOfWeek = getStartOfWeek(2); // Third week
-  //       break;
-  //     case "currentWeek":
-  //     default:
-  //       startOfWeek = getStartOfWeek(0); // Current week
-  //       break;
-  //   }
-
-  //   // Generate payloads for each day in the selected week
-  //   return jsonData
-  //     .map((dayData, index) => {
-  //       const date = new Date(startOfWeek);
-  //       date.setDate(startOfWeek.getDate() + index); // Set date for each day in the week
-
-  //       // Generate separate payloads for each exercise type
-  //       return ["Warm-up", "Main Exercise", "Cool-down"].map(
-  //         (exerciseType) => ({
-  //           header: {
-  //             email: email,
-  //             password: password,
-  //           },
-  //           updateData: {
-  //             year: currentYear,
-  //             month: currentMonth,
-  //             date: date.getDate(),
-  //             day: index, // Day of the week: Monday is 0, Tuesday is 1, etc.
-  //             exerciseType: {
-  //               exerciseName: [dayData[exerciseType]],
-  //               exerciseTime: ["-"], // Placeholder for exercise time
-  //             },
-  //           },
-  //         })
-  //       );
-  //     })
-  //     .flat(); // Flatten the array so each exercise has its own entry
-  // }
   function generateExercisePayloads(jsonData, selectedWeek) {
     const email = localStorage.getItem("fitnessemail");
     const password = localStorage.getItem("fitnesspassword");
     const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
 
     // Function to get the start date of a specific week
     const getStartOfWeek = (weekOffset) => {
@@ -361,44 +297,46 @@ function FitnessAIChatbot() {
       return startOfWeek;
     };
 
+    const generateDayPayload = (dayData, date, index) => {
+      // Gather all exercises for the day in arrays
+      const exerciseNames = ["Warm-up", "Main Exercise", "Cool-down"].map(
+        (exerciseType) => dayData[exerciseType]
+      );
+      const exerciseTimes = exerciseNames.map(() => "-"); // Placeholder for exercise times
+      const exerciseStatus = exerciseNames.map(() => "incomplete"); // Placeholder for exercise status
+
+      // Return a single payload for the day
+      return {
+        header: {
+          email: email,
+          password: password,
+        },
+        updateData: {
+          year: date.getFullYear(),
+          month: date.getMonth() + 1, // Correctly handles overflow
+          date: date.getDate(),
+          day: index + 1, // Day of the week: Monday is 1, Tuesday is 2, etc.
+          exerciseType: {
+            exerciseName: exerciseNames,
+            exerciseTime: exerciseTimes,
+            exerciseStatus: exerciseStatus,
+          },
+        },
+      };
+    };
+
     if (selectedWeek === "lifetime") {
       // Generate start dates for all weeks in the year
-      const weekStartDates = Array.from({ length: 52 }, (_, index) => {
-        const startOfWeek = getStartOfWeek(index);
-        return new Date(startOfWeek);
-      });
+      const weekStartDates = Array.from({ length: 52 }, (_, index) =>
+        getStartOfWeek(index)
+      );
 
       // Generate payloads for each week
       return weekStartDates.flatMap((weekStart) =>
         jsonData.map((dayData, index) => {
           const date = new Date(weekStart);
           date.setDate(weekStart.getDate() + index); // Set date for each day in the week
-
-          // Gather all exercises for the day in arrays
-          const exerciseNames = ["Warm-up", "Main Exercise", "Cool-down"].map(
-            (exerciseType) => dayData[exerciseType]
-          );
-          const exerciseTimes = exerciseNames.map(() => "-"); // Placeholder for exercise times
-          const exerciseStatus = exerciseNames.map(() => "incomplete"); // Placeholder for exercise status
-
-          // Return a single payload for the day
-          return {
-            header: {
-              email: email,
-              password: password,
-            },
-            updateData: {
-              year: date.getFullYear(),
-              month: date.getMonth() + 1,
-              date: date.getDate(),
-              day: index, // Day of the week: Monday is 0, Tuesday is 1, etc.
-              exerciseType: {
-                exerciseName: exerciseNames,
-                exerciseTime: exerciseTimes,
-                exerciseStatus: exerciseStatus,
-              },
-            },
-          };
+          return generateDayPayload(dayData, date, index);
         })
       );
     }
@@ -422,32 +360,7 @@ function FitnessAIChatbot() {
     return jsonData.map((dayData, index) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + index); // Set date for each day in the week
-
-      // Gather all exercises for the day in arrays
-      const exerciseNames = ["Warm-up", "Main Exercise", "Cool-down"].map(
-        (exerciseType) => dayData[exerciseType]
-      );
-      const exerciseTimes = exerciseNames.map(() => "-"); // Placeholder for exercise times
-      const exerciseStatus = exerciseNames.map(() => "incomplete"); // Placeholder for exercise status
-
-      // Return a single payload for the day
-      return {
-        header: {
-          email: email,
-          password: password,
-        },
-        updateData: {
-          year: currentYear,
-          month: currentMonth,
-          date: date.getDate(),
-          day: index, // Day of the week: Monday is 0, Tuesday is 1, etc.
-          exerciseType: {
-            exerciseName: exerciseNames,
-            exerciseTime: exerciseTimes,
-            exerciseStatus: exerciseStatus,
-          },
-        },
-      };
+      return generateDayPayload(dayData, date, index);
     });
   }
 
@@ -529,7 +442,6 @@ function FitnessAIChatbot() {
 
       // Generate payloads for each day
       const payloads = generatePayloads(jsonData, selectedWeek);
-      debugger;
       Promise.all(
         payloads.map((apiData) =>
           api.post("/diet/setdiet", apiData).then((res) => {
@@ -697,7 +609,7 @@ function FitnessAIChatbot() {
                 }`}
               >
                 <div
-                  className={`
+                  className={` capitalize
                   ${
                     message.sender === "user"
                       ? "bg-[#5534a5] "
@@ -705,7 +617,7 @@ function FitnessAIChatbot() {
                   }
                   `}
                 >
-                  {parse(message.text)}
+                  {parse(message.text.replace(/-/g, " "))}
                 </div>
                 {message.text !==
                   "Hi there, how can I be of service for you today?" && (
