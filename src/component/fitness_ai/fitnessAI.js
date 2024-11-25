@@ -1,10 +1,11 @@
 import { Howl } from "howler";
 import parse from "html-react-parser";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import PuffLoader from "react-spinners/PuffLoader";
 import { toast } from "react-toastify";
 import api from "../../service/axios";
+import { ExerciseContext } from "../../store/state.provider";
 
 function FitnessAIChatbot() {
   const [messages, setMessages] = useState([]);
@@ -21,6 +22,7 @@ function FitnessAIChatbot() {
   const [message, setMessage] = useState(null);
   const [input, setInput] = useState("");
   const [selectedWeek, setSelectedWeek] = useState("currentWeek");
+  const { refetch } = useContext(ExerciseContext);
   const chatEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -310,6 +312,7 @@ function FitnessAIChatbot() {
         header: {
           email: email,
           password: password,
+          shouldDelteLogs: true,
         },
         updateData: {
           year: date.getFullYear(),
@@ -510,6 +513,7 @@ function FitnessAIChatbot() {
           setIsSaveModalOpen(false);
           setSelectedWeek("");
           setMessage(null);
+          refetch();
           toast.success("Exercise data saved successfully!");
         })
         .catch((error) => {
@@ -551,7 +555,7 @@ function FitnessAIChatbot() {
                 <option value="thirdWeek">
                   Third Week ({getWeekDates(3).start} - {getWeekDates(3).end})
                 </option>
-                {/* <option value="lifetime">Repeat (Whole Year)</option> */}
+                <option value="lifetime">Repeat (Whole Year)</option>
               </select>
             </div>
 

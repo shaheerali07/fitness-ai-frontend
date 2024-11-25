@@ -294,7 +294,7 @@ function FitnessPlan({ planData, setPlanData }) {
                   Exercise Name
                 </p>
                 <select
-                  className="form-control w-[20%] h-[20%] mr-1 ml-1 "
+                  className="form-control w-[20%] h-auto mr-1 ml-1 "
                   style={{ width: "98%" }}
                   value={exerciseType}
                   onChange={(e) => setExerciseType(e.target.value)}
