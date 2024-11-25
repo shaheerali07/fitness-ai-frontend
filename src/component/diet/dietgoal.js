@@ -16,15 +16,27 @@ function DietGoal({ dietCal, updateWeeklySignal }) {
   const user = localStorage.getItem("user");
   const userId = user ? JSON.parse(user).id : "";
   const calc_kcal = (foodName, dietMenu) => {
+    if (dietMenu.foodName.indexOf(foodName) === -1) {
+      return 0;
+    }
     return dietMenu.kcal[dietMenu.foodName.indexOf(foodName)];
   };
   const calc_protein = (foodName, dietMenu) => {
+    if (dietMenu.foodName.indexOf(foodName) === -1) {
+      return 0;
+    }
     return dietMenu.protein[dietMenu.foodName.indexOf(foodName)];
   };
   const calc_carbs = (foodName, dietMenu) => {
+    if (dietMenu.foodName.indexOf(foodName) === -1) {
+      return 0;
+    }
     return dietMenu.carbohydrate[dietMenu.foodName.indexOf(foodName)];
   };
   const calc_mineral = (foodName, dietMenu) => {
+    if (dietMenu.foodName.indexOf(foodName) === -1) {
+      return 0;
+    }
     return dietMenu.mineral[dietMenu.foodName.indexOf(foodName)];
   };
 
@@ -390,10 +402,10 @@ function DietGoal({ dietCal, updateWeeklySignal }) {
     if (dietCal === null) {
       return;
     }
-    setDailyTotalKcal(parseInt(calc_DailyTotalKcal(dietCal)));
-    setDailyTotalCarbs(parseInt(calc_DailyTotalCarbs(dietCal)));
-    setDailyTotalProteins(parseInt(calc_DailyTotalProteins(dietCal)));
-    setDailyTotalMinerals(parseInt(calc_DailyTotalMinerals(dietCal)));
+    setDailyTotalKcal(parseFloat(calc_DailyTotalKcal(dietCal)));
+    setDailyTotalCarbs(parseFloat(calc_DailyTotalCarbs(dietCal)));
+    setDailyTotalProteins(parseFloat(calc_DailyTotalProteins(dietCal)));
+    setDailyTotalMinerals(parseFloat(calc_DailyTotalMinerals(dietCal)));
 
     const { startDate, endDate } = getWeekStartAndEnd();
     let weeklytotalcal = 0;
@@ -415,17 +427,18 @@ function DietGoal({ dietCal, updateWeeklySignal }) {
             weeklytotalminerals =
               weeklytotalminerals + weeklyTotalCalcMinerals(item);
           });
-          setWeeklyTotalKcal(parseInt(weeklytotalcal));
-          // setTargetKcal(parseInt(weeklytotalcal));
-          setWeeklyTotalCarbs(parseInt(weeklytotalcarbs));
-          setWeeklyTotalProteins(parseInt(weeklytotalproteins));
-          setWeeklyTotalMinerals(parseInt(weeklytotalminerals));
+          setWeeklyTotalKcal(parseFloat(weeklytotalcal));
+          // setTargetKcal(parseFloat(weeklytotalcal));
+          setWeeklyTotalCarbs(parseFloat(weeklytotalcarbs));
+          setWeeklyTotalProteins(parseFloat(weeklytotalproteins));
+          setWeeklyTotalMinerals(parseFloat(weeklytotalminerals));
         }
       })
       .catch((err) => {
         console.log(err);
       });
   }, [updateWeeklySignal, dietCal]);
+
   return (
     <>
       <DietStats

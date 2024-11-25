@@ -12,14 +12,16 @@ const KcalCard = ({ goal, title, todayConsumed, weeklyConsumed, icon }) => {
           <span className="w-7 h-7  flex items-center justify-center bg-[#F1EEF6] rounded">
             <img src="target 1.png" alt="icon" className="h-4 w-4" />
           </span>
-          <span className="text-[14px] font-[500]">Goal: {goal}</span>
+          <span className="text-[14px] font-[500]">
+            Goal: {parseFloat(goal).toFixed(0)}
+          </span>
         </li>
         <li className="flex items-center space-x-2 mt-2">
           <span className="w-7 h-7 flex items-center justify-center bg-[#F1EEF6] rounded">
             <img src="date 1.png" alt="icon" className="h-4 w-4" />
           </span>
           <span className="text-[14px] font-[500]">
-            Today Consumed: {todayConsumed}
+            Today Consumed: {parseFloat(todayConsumed).toFixed(0)}
           </span>
         </li>
         <li className="flex items-center space-x-2 mt-2">
@@ -27,7 +29,7 @@ const KcalCard = ({ goal, title, todayConsumed, weeklyConsumed, icon }) => {
             <img src="7-days 1.png" alt="icon" className="h-4 w-4" />
           </span>
           <span className="text-[14px] font-[500]">
-            Weekly Consumed: {weeklyConsumed}
+            Weekly Consumed: {parseFloat(weeklyConsumed).toFixed(0)}
           </span>
         </li>
       </ul>
