@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../service/axios";
 import { getWeekStartAndEnd } from "../../utils/auth";
 import DietStats from "./dietStats";
 
-function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
+function DietGoal({ dietCal, updateWeeklySignal }) {
   const [dailyTotalKcal, setDailyTotalKcal] = useState(0);
   const [weeklyTotalKcal, setWeeklyTotalKcal] = useState(0);
-  const [targetKcal, setTargetKcal] = useState(0);
+  // const [targetKcal, setTargetKcal] = useState(0);
   const [dailyTotalCarbs, setDailyTotalCarbs] = useState(0);
   const [weeklyTotalCarbs, setWeeklyTotalCarbs] = useState(0);
   const [dailyTotalProteins, setDailyTotalProteins] = useState(0);
@@ -99,7 +99,7 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
     dialyFoodMenu.map((item, i) => {
       item.map((itx, j) => {
         myTotalKcal =
-          myTotalKcal + (calc_kcal(itx, dietMenu) * amountMenu[i][j]) / 100;
+          myTotalKcal + (calc_carbs(itx, dietMenu) * amountMenu[i][j]) / 100;
       });
     });
     return myTotalKcal;
@@ -221,7 +221,6 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
         myTotalKcal = myTotalKcal + (temp * amountMenu[i][j]) / 100;
       });
     });
-    console.log(myTotalKcal);
 
     return myTotalKcal;
   };
@@ -344,7 +343,6 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
   const year = [];
   const month = [];
   const date = [];
-  const day = [];
 
   for (let i = 0; i < 7; i++) {
     const currentDate = new Date();
@@ -409,7 +407,7 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
       })
       .then((res) => {
         if (res.data.message === "success") {
-          res.data.result.map((item, i) => {
+          res.data.result.map((item) => {
             weeklytotalcal = weeklytotalcal + weeklyTotalCalcKcal(item);
             weeklytotalcarbs = weeklytotalcarbs + weeklyTotalCalcCarbs(item);
             weeklytotalproteins =
@@ -418,7 +416,7 @@ function DietGoal({ dietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
               weeklytotalminerals + weeklyTotalCalcMinerals(item);
           });
           setWeeklyTotalKcal(parseInt(weeklytotalcal));
-          setTargetKcal(parseInt(weeklytotalcal));
+          // setTargetKcal(parseInt(weeklytotalcal));
           setWeeklyTotalCarbs(parseInt(weeklytotalcarbs));
           setWeeklyTotalProteins(parseInt(weeklytotalproteins));
           setWeeklyTotalMinerals(parseInt(weeklytotalminerals));

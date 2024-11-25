@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import PuffLoader from "react-spinners/PuffLoader";
 import { toast } from "react-toastify";
@@ -37,6 +37,7 @@ function Dashboard() {
           }
         } else {
           setLoading(false);
+          localStorage.clear();
           toast.error("Email or password is not correct.");
           window.location.replace("/login");
         }
@@ -45,7 +46,7 @@ function Dashboard() {
         setLoading(false);
         toast.error(
           err?.response?.data?.message ??
-            "Something went wrong. Please try again.",
+            "Something went wrong. Please try again."
         );
       });
   };
@@ -98,7 +99,7 @@ function Dashboard() {
         toast.error("An error occurred while updating.");
         toast.error(
           err?.response?.data?.message ??
-            "Something went wrong. Please try again.",
+            "Something went wrong. Please try again."
         );
       });
   };

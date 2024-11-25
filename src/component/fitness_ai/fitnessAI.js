@@ -1,6 +1,6 @@
 import { Howl } from "howler";
 import parse from "html-react-parser";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import PuffLoader from "react-spinners/PuffLoader";
 import { toast } from "react-toastify";
@@ -82,7 +82,6 @@ function FitnessAIChatbot() {
 
   useEffect(() => {
     fetchUserChatHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -103,8 +102,8 @@ function FitnessAIChatbot() {
         input === "Suggest me diet plans"
           ? "Suggest me diet plans according my fitness goal, height, weight etc. and for whole week"
           : input === "Suggest me exercise plans"
-          ? "Suggest me exercise plans according my fitness goal, height, weight etc. and for whole week"
-          : input;
+            ? "Suggest me exercise plans according my fitness goal, height, weight etc. and for whole week"
+            : input;
 
       api
         .get(
@@ -153,8 +152,8 @@ function FitnessAIChatbot() {
       promptText === "Suggest me diet plans"
         ? "Suggest me diet plans according my fitness goal, height, weight etc. and for whole week"
         : promptText === "Suggest me exercise plans"
-        ? "Suggest me exercise plans according my fitness goal, height, weight etc. and for whole week"
-        : promptText;
+          ? "Suggest me exercise plans according my fitness goal, height, weight etc. and for whole week"
+          : promptText;
 
     api
       .get(
@@ -187,10 +186,8 @@ function FitnessAIChatbot() {
     const email = localStorage.getItem("fitnessemail");
     const password = localStorage.getItem("fitnesspassword");
     const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
 
-    // Function to get start date of a week
+    // Function to get the start date of a week
     const getStartOfWeek = (weekOffset) => {
       const dayOfWeek = currentDate.getDay();
       const currentMonday = new Date(currentDate);
@@ -201,62 +198,61 @@ function FitnessAIChatbot() {
       startOfWeek.setDate(currentMonday.getDate() + 7 * weekOffset); // Adjust for the given week offset (0 = current, 1 = second, etc.)
       return startOfWeek;
     };
+
+    const generateDayPayload = (dayData, date, index) => {
+      const meal = {
+        breakfast: dayData["Breakfast"] ? [dayData["Breakfast"].foodName] : [],
+        snack1: dayData["Snack 1"] ? [dayData["Snack 1"].foodName] : [],
+        lunch: dayData["Lunch"] ? [dayData["Lunch"].foodName] : [],
+        snack2: dayData["Snack 2"] ? [dayData["Snack 2"].foodName] : [],
+        dinner: dayData["Dinner"] ? [dayData["Dinner"].foodName] : [],
+      };
+
+      const amount = {
+        breakfast: meal.breakfast.length > 0 ? ["100"] : [],
+        snack1: meal.snack1.length > 0 ? ["100"] : [],
+        lunch: meal.lunch.length > 0 ? ["100"] : [],
+        snack2: meal.snack2.length > 0 ? ["100"] : [],
+        dinner: meal.dinner.length > 0 ? ["100"] : [],
+      };
+
+      const status = {
+        breakfast: ["incomplete"],
+        snack1: ["incomplete"],
+        lunch: ["incomplete"],
+        snack2: ["incomplete"],
+        dinner: ["incomplete"],
+      };
+
+      return {
+        header: {
+          email: email,
+          password: password,
+        },
+        updateData: {
+          year: date.getFullYear(),
+          month: date.getMonth() + 1, // Correctly handles overflow
+          date: date.getDate(),
+          day: index + 1, // Day of the week: Monday is 1, Tuesday is 2, etc.
+          meal: meal,
+          amount: amount,
+          status: status,
+        },
+      };
+    };
+
     if (selectedWeek === "lifetime") {
       // Generate start dates for all weeks in the year
-      const weekStartDates = Array.from({ length: 52 }, (_, index) => {
-        const startOfWeek = getStartOfWeek(index);
-        return new Date(startOfWeek);
-      });
+      const weekStartDates = Array.from({ length: 52 }, (_, index) =>
+        getStartOfWeek(index)
+      );
 
       // Generate payloads for each week
       return weekStartDates.flatMap((weekStart) =>
         jsonData.dietPlan.map((dayData, index) => {
           const date = new Date(weekStart);
           date.setDate(weekStart.getDate() + index); // Adjust to the specific day in the week
-
-          // Organize meal data
-          const meal = {
-            breakfast: dayData["Breakfast"]
-              ? [dayData["Breakfast"].foodName]
-              : [],
-            snack1: dayData["Snack 1"] ? [dayData["Snack 1"].foodName] : [],
-            lunch: dayData["Lunch"] ? [dayData["Lunch"].foodName] : [],
-            snack2: dayData["Snack 2"] ? [dayData["Snack 2"].foodName] : [],
-            dinner: dayData["Dinner"] ? [dayData["Dinner"].foodName] : [],
-          };
-
-          // Organize amount data
-          const amount = {
-            breakfast: meal.breakfast.length > 0 ? ["100"] : [],
-            snack1: meal.snack1.length > 0 ? ["100"] : [],
-            lunch: meal.lunch.length > 0 ? ["100"] : [],
-            snack2: meal.snack2.length > 0 ? ["100"] : [],
-            dinner: meal.dinner.length > 0 ? ["100"] : [],
-          };
-          const status = {
-            breakfast: ["incomplete"],
-            snack1: ["incomplete"],
-            lunch: ["incomplete"],
-            snack2: ["incomplete"],
-            dinner: ["incomplete"],
-          };
-
-          // Payload structure for each day
-          return {
-            header: {
-              email: email,
-              password: password,
-            },
-            updateData: {
-              year: date.getFullYear(),
-              month: date.getMonth() + 1,
-              date: date.getDate(),
-              day: index + 1, // Day of the week: Monday is 1, Tuesday is 2, etc.
-              meal: meal,
-              amount: amount,
-              status: status,
-            },
-          };
+          return generateDayPayload(dayData, date, index);
         })
       );
     }
@@ -280,49 +276,10 @@ function FitnessAIChatbot() {
     return jsonData.dietPlan.map((dayData, index) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + index); // Adjust to the specific day in the week
-
-      // Organize meal data
-      const meal = {
-        breakfast: dayData["Breakfast"] ? [dayData["Breakfast"].foodName] : [],
-        snack1: dayData["Snack 1"] ? [dayData["Snack 1"].foodName] : [],
-        lunch: dayData["Lunch"] ? [dayData["Lunch"].foodName] : [],
-        snack2: dayData["Snack 2"] ? [dayData["Snack 2"].foodName] : [],
-        dinner: dayData["Dinner"] ? [dayData["Dinner"].foodName] : [],
-      };
-
-      // Organize amount data
-      const amount = {
-        breakfast: meal.breakfast.length > 0 ? ["100"] : [],
-        snack1: meal.snack1.length > 0 ? ["100"] : [],
-        lunch: meal.lunch.length > 0 ? ["100"] : [],
-        snack2: meal.snack2.length > 0 ? ["100"] : [],
-        dinner: meal.dinner.length > 0 ? ["100"] : [],
-      };
-      const status = {
-        breakfast: ["incomplete"],
-        snack1: ["incomplete"],
-        lunch: ["incomplete"],
-        snack2: ["incomplete"],
-        dinner: ["incomplete"],
-      };
-      // Payload structure for each day
-      return {
-        header: {
-          email: email,
-          password: password,
-        },
-        updateData: {
-          year: currentYear,
-          month: currentMonth,
-          date: date.getDate(),
-          day: index + 1, // Day of the week: Monday is 1, Tuesday is 2, etc.
-          meal: meal,
-          amount: amount,
-          status: status,
-        },
-      };
+      return generateDayPayload(dayData, date, index);
     });
   }
+
   // function generateExercisePayloads(jsonData, selectedWeek) {
   //   const email = localStorage.getItem("fitnessemail");
   //   const password = localStorage.getItem("fitnesspassword");
@@ -572,6 +529,7 @@ function FitnessAIChatbot() {
 
       // Generate payloads for each day
       const payloads = generatePayloads(jsonData, selectedWeek);
+      debugger;
       Promise.all(
         payloads.map((apiData) =>
           api.post("/diet/setdiet", apiData).then((res) => {

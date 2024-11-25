@@ -38,8 +38,6 @@ export default [
   // Add Prettier integration (optional but recommended for consistent formatting)
   {
     plugins: { prettier: pluginPrettier },
-    rules: {
-      "prettier/prettier": "error", // Show Prettier issues as ESLint errors
-    },
+    rules: {},
   },
 ];

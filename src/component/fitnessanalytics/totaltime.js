@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { ExerciseContext } from "../../store/state.provider";
 function TotalTime() {
   const { totalTime, completedPercentage } = useContext(ExerciseContext);

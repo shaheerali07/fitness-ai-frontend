@@ -1,6 +1,6 @@
 // src/App.js
 import { Analytics } from "@vercel/analytics/react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import {
   Navigate,
@@ -24,7 +24,7 @@ function App() {
   useEffect(() => {
     // Check if the user is authenticated
     const checkAuth = async () => {
-      const authStatus = await isAuthenticated(); // Assuming this is an async call
+      const authStatus = isAuthenticated(); // Assuming this is an async call
       setIsAuth(authStatus);
       setLoading(false); // Authentication check is complete
     };

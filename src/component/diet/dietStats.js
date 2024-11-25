@@ -1,13 +1,4 @@
-import React from "react";
-
-const KcalCard = ({
-  goal,
-  title,
-  todayConsumed,
-  weeklyConsumed,
-  icon,
-  index,
-}) => {
+const KcalCard = ({ goal, title, todayConsumed, weeklyConsumed, icon }) => {
   return (
     <div className="border rounded-lg shadow-md p-3 bg-white">
       <div className="flex items-center justify-between px-2 bg-[#F1EEF6] py-2 rounded-md">
