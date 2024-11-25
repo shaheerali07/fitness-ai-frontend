@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ExerciseContext } from "../store/state.provider.js";
 import Analytics from "./analytics/analytics.js";
 import Diet from "./diet/diet.js";
@@ -35,7 +35,6 @@ function MainBox({
     if (sideBarIndex > 0) {
       refetch();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sideBarIndex]);
 
   const setSideBarState = () => {

@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -216,7 +216,7 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
         toast.error("An error occurred while updating.");
         toast.error(
           err?.response?.data?.message ??
-            "Something went wrong. Please try again.",
+            "Something went wrong. Please try again."
         );
       });
   };

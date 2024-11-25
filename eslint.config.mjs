@@ -17,6 +17,7 @@ export default [
       // Additional recommended JavaScript rules
       "no-unused-vars": "warn",
       "no-console": "warn",
+      "no-debugger": "error",
       eqeqeq: "error",
       curly: "error",
     },

@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 function Header({
   sideBarIndex,
-  headerContent,
-  setHeaderContent,
   setSideBarIndex,
   setShowModal,
   setShowChangePasswordModal,
@@ -20,7 +18,6 @@ function Header({
   const [showWidget, setShowWidget] = useState(false);
   const [avatarSrc, setAvatarSrc] = useState("user.png");
   const [avatarName, setAvatarName] = useState("Log in");
-
   // let loginstate = false;
   useEffect(() => {
     if (userDetails) {
@@ -64,26 +61,24 @@ function Header({
             {" "}
             {/* Make this div relative */}
             <div className="flex flex-col items-center justify-center gap-[0px]">
-              <button
-                className="mt-2"
-                onClick={(e) => {
+              <div
+                className="w-[70px] h-[70px] rounded-full border border-gray-300 flex items-center justify-center cursor-pointer"
+                onClick={() => {
                   showWidget === true
                     ? setShowWidget(false)
                     : setShowWidget(true);
                 }}
               >
                 <img
-                  className="rounded-full mt-2 border-2 border-[#5534A5] cursor-pointer"
+                  className="rounded-full w-[70px] h-[70px] object-cover  border-2 border-[#5534A5] cursor-pointer"
                   src={avatarSrc}
                   alt="avatar"
-                  width="50px"
-                  height={"50px"}
                   style={{ marginTop: "10px" }}
                 />
-              </button>
+              </div>
               <p
-                className="text-[#757575] text-[14px] font-bold cursor-pointer"
-                onClick={(e) => setShowWidget(!showWidget)}
+                className="text-[#757575] mt-2 text-[16px] font-bold cursor-pointer"
+                onClick={() => setShowWidget(!showWidget)}
               >
                 {avatarName}
               </p>
@@ -100,7 +95,7 @@ function Header({
                   </button>
                   <button
                     className="text-[#5534A5] text-[15px] hover:bg-[#5534A5] hover:text-[white] duration-500 border w-full h-[40px]"
-                    onClick={(e) => {
+                    onClick={() => {
                       setShowChangePasswordModal(true);
                     }}
                   >
@@ -108,7 +103,7 @@ function Header({
                   </button>
                   <button
                     className="text-[#5534A5] text-[15px] hover:bg-[#5534A5] hover:text-[white] duration-500 border w-full h-[40px]"
-                    onClick={(e) => {
+                    onClick={() => {
                       setShowWidget(false);
                       localStorage.clear();
                       setAvatarName("Log in");
