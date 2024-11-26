@@ -621,7 +621,7 @@ function FitnessAIChatbot() {
                   }
                   `}
                 >
-                  {parse(message.text)}
+                  {parse(message.text.replace(/-/g, " "))}
                 </div>
                 {message.text !==
                   "Hi there, how can I be of service for you today?" && (
