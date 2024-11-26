@@ -2,19 +2,20 @@
   text-align: center;
 }
 
-table {
+.custom-style table {
   font-size: 14px !important;
+  margin-bottom: 10px !important;
 }
-tr {
+.custom-style tr {
   border-bottom: 1px solid #0b060692 !important;
 }
-td {
+.custom-style td {
   padding: 10px !important;
 }
-th {
+.custom-style th {
   padding: 10px !important;
 }
-th {
+.custom-style th {
   font-size: 16px !important;
 }
 .App-logo {

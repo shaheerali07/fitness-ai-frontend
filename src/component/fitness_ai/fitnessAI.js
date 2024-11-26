@@ -613,7 +613,7 @@ function FitnessAIChatbot() {
                 }`}
               >
                 <div
-                  className={` capitalize
+                  className={` custom-style
                   ${
                     message.sender === "user"
                       ? "bg-[#5534a5] "
@@ -621,7 +621,7 @@ function FitnessAIChatbot() {
                   }
                   `}
                 >
-                  {parse(message.text.replace(/-/g, " "))}
+                  {parse(message.text)}
                 </div>
                 {message.text !==
                   "Hi there, how can I be of service for you today?" && (

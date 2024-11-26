@@ -61,7 +61,10 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
       .required("Exercise limitations are required"),
     medicationDetail: yup.string(),
     exerciseLimitationsDetail: yup.string(),
+    injury: yup.string().required("Injury is required"),
     agreeTerms: yup.boolean(),
+    injuryDetail: yup.string(),
+
     // receiveEmails: yup.boolean(),
   });
 
@@ -90,6 +93,8 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
     // receiveEmails: true,
     username: "", // Add username as an empty string for default
     email: "",
+    injury: "",
+    injuryDetail: "",
   };
 
   const methods = useForm({
@@ -128,6 +133,8 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
         // receiveEmails: userDetails.receiveEmails,
         username: userDetails.username, // Update with userDetails
         email: userDetails.email, // Update with userDetails
+        injury: userDetails.injury || "",
+        injuryDetail: userDetails.injuryDetail || "",
       });
     }
   }, [userDetails, methods]);
@@ -192,6 +199,12 @@ const Onboarding = ({ userDetails, setShowModal, fetchUserByEmail }) => {
     if (data.agreeTerms === false) {
       toast.error("Please agree to the terms and conditions.");
       return;
+    }
+    if (data.injury === "yes") {
+      if (!data.injuryDetail.length) {
+        toast.error("Please select injury type");
+        return;
+      }
     }
     setLoading(true);
     // API call to update user
