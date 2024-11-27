@@ -48,6 +48,7 @@ function Dashboard() {
           err?.response?.data?.message ??
             "Something went wrong. Please try again."
         );
+        window.location.replace("/login");
       });
   };
 

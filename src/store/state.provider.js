@@ -46,7 +46,7 @@ export const ExerciseProvider = ({ children }) => {
     const { data } = await api.get("/exercise/getTotals", {
       params: { startDate, endDate, userId },
     });
-    if (data && data.totalCounter) {
+    if (data) {
       setResultCounter(parseInt(data.totalCounter));
       setResultAccuracy(parseInt(data.averageAccuracy));
 
@@ -102,7 +102,7 @@ export const ExerciseProvider = ({ children }) => {
           params: { startDate, endDate, userId },
         }
       );
-      if (data && data.overallCompletionPercentage) {
+      if (data) {
         setTotalExercises(parseInt(data.totalExercises));
         setProgress(
           isNaN(data.overallCompletionPercentage)
