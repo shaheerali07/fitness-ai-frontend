@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Howl } from "howler";
 import parse from "html-react-parser";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -161,7 +162,7 @@ function FitnessAIChatbot() {
       .get(
         `/chatbot/askMe?question=${encodeURIComponent(
           question
-        )}&email=${encodeURIComponent(email)}`
+        )}&email=${encodeURIComponent(email)}&shouldSave=true`
       )
       .then((res) => {
         setLoading(false);
@@ -489,13 +490,52 @@ function FitnessAIChatbot() {
 
         return rowData;
       });
-
+      const cleanSchedule = data.map((day) => {
+        // Filter out keys with the value "No exercises available"
+        return Object.fromEntries(
+          Object.entries(day).filter(
+            ([_, value]) => value !== "No exercises available"
+          )
+        );
+      });
       // Use generatePayloads to create exercise payloads based on selected week
-      const exercisePayloads = generateExercisePayloads(data, selectedWeek);
+      const exercisePayloads = generateExercisePayloads(
+        cleanSchedule,
+        selectedWeek
+      );
+      const cleanData = exercisePayloads.map((item) => {
+        const { exerciseName, exerciseTime, exerciseStatus } =
+          item.updateData.exerciseType;
+
+        // Filter the indices where exerciseName is not null or undefined
+        const validIndices = exerciseName
+          .map((name, index) =>
+            name !== null && name !== undefined ? index : null
+          )
+          .filter((index) => index !== null);
+
+        // Create new filtered arrays using valid indices
+        const filteredExerciseName = validIndices.map(
+          (index) => exerciseName[index]
+        );
+        const filteredExerciseTime = validIndices.map(
+          (index) => exerciseTime[index]
+        );
+        const filteredExerciseStatus = validIndices.map(
+          (index) => exerciseStatus[index]
+        );
+
+        // Update the exerciseType in the current item
+        item.updateData.exerciseType.exerciseName = filteredExerciseName;
+        item.updateData.exerciseType.exerciseTime = filteredExerciseTime;
+        item.updateData.exerciseType.exerciseStatus = filteredExerciseStatus;
+
+        return item; // Return the updated item
+      });
 
       // Optionally, you can now post each payload to the backend if needed:
       Promise.all(
-        exercisePayloads.map((payload) =>
+        cleanData.map((payload) =>
           api.post("/exercise/setexercise", payload).then((res) => {
             if (res.data.success) {
               console.log(
@@ -682,7 +722,7 @@ function FitnessAIChatbot() {
             placeholder="Type your message..."
           />
           <button
-            disabled={loading}
+            disabled={loading || !input.trim()}
             onClick={handleSend}
             className="ml-4 disabled:cursor-not-allowed px-4 py-2 bg-[#5534a5] hover:bg-[#4c2f8b] transition text-base text-white rounded-lg"
           >
