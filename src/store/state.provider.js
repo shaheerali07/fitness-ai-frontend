@@ -60,41 +60,60 @@ export const ExerciseProvider = ({ children }) => {
 
   const fetchTotalTime = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
-    const { data } = await api.get("/exercise/getTotalExerciseTime", {
-      params: { startDate, endDate, userId },
-    });
-    if (data && data.totalDuration) {
-      setTotalTime(data.totalDuration);
-    } else {
+    try {
+      const { data } = await api.get("/exercise/getTotalExerciseTime", {
+        params: { startDate, endDate, userId },
+      });
+      if (data && data.totalDuration) {
+        setTotalTime(data.totalDuration);
+      } else {
+        setTotalTime("N/A");
+      }
+    } catch {
       setTotalTime("N/A");
     }
   };
 
   const fetchCompletedTimePercentage = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
-    const { data } = await api.get("/exercise/getCompletedExercisePercentage", {
-      params: { startDate, endDate, userId },
-    });
-    if (data && data.overallCompletionPercentage) {
-      setCompletedPercentage(parseInt(data.overallCompletionPercentage));
-    } else {
+    try {
+      const { data } = await api.get(
+        "/exercise/getCompletedExercisePercentage",
+        {
+          params: { startDate, endDate, userId },
+        }
+      );
+      if (data && data.overallCompletionPercentage) {
+        setCompletedPercentage(parseInt(data.overallCompletionPercentage));
+      } else {
+        setCompletedPercentage(0);
+      }
+    } catch {
       setCompletedPercentage(0);
     }
   };
 
   const fetchCompletedChartPercentage = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
-    const { data } = await api.get("/exercise/getCompletedExercisePercentage", {
-      params: { startDate, endDate, userId },
-    });
-    if (data && data.overallCompletionPercentage) {
-      setTotalExercises(parseInt(data.totalExercises));
-      setProgress(
-        isNaN(data.overallCompletionPercentage)
-          ? 0
-          : parseInt(data.overallCompletionPercentage)
+    try {
+      const { data } = await api.get(
+        "/exercise/getCompletedExercisePercentage",
+        {
+          params: { startDate, endDate, userId },
+        }
       );
-    } else {
+      if (data && data.overallCompletionPercentage) {
+        setTotalExercises(parseInt(data.totalExercises));
+        setProgress(
+          isNaN(data.overallCompletionPercentage)
+            ? 0
+            : parseInt(data.overallCompletionPercentage)
+        );
+      } else {
+        setTotalExercises(0);
+        setProgress(0);
+      }
+    } catch {
       setTotalExercises(0);
       setProgress(0);
     }
@@ -102,21 +121,28 @@ export const ExerciseProvider = ({ children }) => {
 
   const fetchExerciseStats = async () => {
     const { startDate, endDate } = getWeekStartAndEnd();
-    const { data } = await api.get("/exercise/getWeeklyExerciseStats", {
-      params: { startDate, endDate, userId },
-    });
-    if (data && data.chartData) {
-      const chartData = data.chartData;
-      const dates = chartData.map((item) => item.date);
-      const accuracies = chartData.map((item) => item.accuracy);
-      const counters = chartData.map((item) => item.counter);
-      const durations = chartData.map((item) => item.duration);
+    try {
+      const { data } = await api.get("/exercise/getWeeklyExerciseStats", {
+        params: { startDate, endDate, userId },
+      });
+      if (data && data.chartData) {
+        const chartData = data.chartData;
+        const dates = chartData.map((item) => item.date);
+        const accuracies = chartData.map((item) => item.accuracy);
+        const counters = chartData.map((item) => item.counter);
+        const durations = chartData.map((item) => item.duration);
 
-      setXLabels(dates);
-      setResultChartAccuracy(accuracies);
-      setResultChartCounter(counters);
-      setResultChartDurtime(durations);
-    } else {
+        setXLabels(dates);
+        setResultChartAccuracy(accuracies);
+        setResultChartCounter(counters);
+        setResultChartDurtime(durations);
+      } else {
+        setXLabels([]);
+        setResultChartAccuracy([]);
+        setResultChartCounter([]);
+        setResultChartDurtime([]);
+      }
+    } catch {
       setXLabels([]);
       setResultChartAccuracy([]);
       setResultChartCounter([]);
