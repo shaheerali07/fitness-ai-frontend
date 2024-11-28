@@ -603,6 +603,7 @@ function FitnessAIChatbot() {
             <div className="flex justify-center">
               <button
                 onClick={handleSave}
+                disabled={loading}
                 className="bg-[#5534a5] text-white px-4 py-2 text-[18px] rounded-lg hover:bg-[#4c2f8b] transition"
               >
                 Save

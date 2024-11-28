@@ -51,5 +51,3 @@ export const getAllExercises = () => {
 
   return exercises;
 };
-
-const allExercises = getAllExercises();

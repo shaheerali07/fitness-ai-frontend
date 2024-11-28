@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 function SideBar({ mainContent, setMainContent }) {
   const [showSideBarState, setSideBar] = useState(true);
@@ -38,7 +38,7 @@ function SideBar({ mainContent, setMainContent }) {
       <div className="flex flex-col justify-center w-[0%] xl:w-[22%]  h-[100%] z-1">
         <button
           className="absolute top-[30px] left-[0px] block xl:hidden"
-          onClick={(e) => {
+          onClick={() => {
             setSideBar(!showSideBarState);
             // const newData = { ...mainContent, showSideBar: showSideBarState }
             // setMainContent(newData)
@@ -52,7 +52,10 @@ function SideBar({ mainContent, setMainContent }) {
           } justify-start items-center h-[90%] xl:block mt-[100px]`}
         >
           {sideBar_Dash_Btn.map((item, index) => (
-            <div className={`flex items-center w-[90%] h-[15%]  mt-2 mb-2`}>
+            <div
+              key={index}
+              className={`flex items-center w-[90%] h-[15%]  mt-2 mb-2`}
+            >
               <div
                 className={`w-[5%]  h-[50%] ${
                   accidentID === index ? "bg-[#5534A5]" : ""
@@ -62,7 +65,7 @@ function SideBar({ mainContent, setMainContent }) {
                 className={`${
                   accidentID === index ? "text-[#5534A5]" : "text-[#757575]"
                 } flex items-center font-1xl hover:text-[#5534A5] duration-500 w-[50%]`}
-                onClick={(e) => setHandle(index)}
+                onClick={() => setHandle(index)}
               >
                 <img
                   className="mr-1 ml-[60%] sm:ml-[20%] md:ml-10 md:mr-6  "
