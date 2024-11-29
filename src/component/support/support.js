@@ -46,7 +46,6 @@ function Support() {
     ]);
     const header = {
       email: localStorage.getItem("fitnessemail"),
-      password: localStorage.getItem("fitnesspassword"),
     };
     const updateData = {
       year: today.getFullYear(),

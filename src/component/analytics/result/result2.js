@@ -35,7 +35,6 @@ function Result2({
     }
     const header = {
       email: localStorage.getItem("fitnessemail"),
-      password: localStorage.getItem("fitnesspassword"),
     };
     const updateData = exerciseResult;
     api

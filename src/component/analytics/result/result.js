@@ -33,7 +33,7 @@ function Result({
       return;
     }
     const selectedKind = kind_select.kinds.find(
-      (kind) => kind.category === number_category,
+      (kind) => kind.category === number_category
     );
     exerciseResult.category = number_category;
     exerciseResult.exercise = number_subcategory;
@@ -44,7 +44,6 @@ function Result({
     exerciseResult.hour = exerciseResult.durtime;
     const header = {
       email: localStorage.getItem("fitnessemail"),
-      password: localStorage.getItem("fitnesspassword"),
     };
     api
       .post("/exercise/setlogs", { header, updateData: exerciseResult })
@@ -68,7 +67,7 @@ function Result({
     // Load subcategories based on the selected category
     if (number_category) {
       const selectedKind = kind_select.kinds.find(
-        (kind) => kind.category === number_category,
+        (kind) => kind.category === number_category
       );
       if (selectedKind && typeof selectedKind.exercises === "object") {
         if (selectedKind.category === "GYM EXERCISES") {
@@ -86,7 +85,7 @@ function Result({
     // Load exercises based on the selected subcategory
     if (number_category && number_subcategory) {
       const selectedKind = kind_select.kinds.find(
-        (kind) => kind.category === number_category,
+        (kind) => kind.category === number_category
       );
       if (selectedKind && selectedKind.exercises[number_subcategory]) {
         setExercises(selectedKind.exercises[number_subcategory]);
@@ -98,7 +97,7 @@ function Result({
     // Load video whenever category, subcategory, or exercise changes
     if (number_category && number_subcategory) {
       const selectedKind = kind_select.kinds.find(
-        (kind) => kind.category === number_category,
+        (kind) => kind.category === number_category
       );
       if (selectedKind.category === "GYM EXERCISES") {
         return;
@@ -128,7 +127,7 @@ function Result({
     // Load video whenever category, subcategory, or exercise changes
     if (number_category && number_subcategory && number_exercise) {
       const selectedKind = kind_select.kinds.find(
-        (kind) => kind.category === number_category,
+        (kind) => kind.category === number_category
       );
       let params = {
         category: number_category,
@@ -200,7 +199,7 @@ function Result({
                 }
                 setIsSelectDisabled(!isSelectDisabled);
                 const selectedKind = kind_select.kinds.find(
-                  (kind) => kind.category === number_category,
+                  (kind) => kind.category === number_category
                 );
                 let new_data = {
                   ...stateResultData,

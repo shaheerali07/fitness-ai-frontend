@@ -12,7 +12,6 @@ export const loginUser = async (user) => {
     localStorage.setItem("user", JSON.stringify(user)); // Set user in localStorage
     localStorage.setItem("token", user.token);
     localStorage.setItem("fitnessemail", user.email);
-    localStorage.setItem("fitnesspassword", user.password);
     window.location.replace("/dashboard");
   } catch (error) {
     console.error("Error in loginUser:", error);

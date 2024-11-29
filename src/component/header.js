@@ -27,7 +27,6 @@ function Header({
       return;
     }
     // const localEmail = localStorage.getItem("fitnessemail");
-    // const localPassword = localStorage.getItem("fitnesspassword");
     // api
     //   .get("/admin/signin", {
     //     params: { email: localEmail, password: localPassword },

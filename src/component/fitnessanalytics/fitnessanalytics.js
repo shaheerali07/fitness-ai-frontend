@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../../service/axios.js";
 import Chart from "./chart";
 import FitnessCalendar from "./fitnesscalendar";
@@ -29,7 +29,6 @@ function FitnessAnalytics({ email, password }) {
 
   useEffect(() => {
     fetchUserByEmail();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [planData, setPlanData] = useState({
@@ -47,10 +46,8 @@ function FitnessAnalytics({ email, password }) {
       return;
     }
     const localEmail = localStorage.getItem("fitnessemail");
-    const localPassword = localStorage.getItem("fitnesspassword");
     const header = {
       email: localEmail,
-      password: localPassword,
     };
     const getData = {
       year: planData.year,
@@ -85,7 +82,6 @@ function FitnessAnalytics({ email, password }) {
           setPlanData(newData);
         }
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planData.day]);
 
   return (

@@ -51,10 +51,8 @@ function DietPlan({ setdietCal, updateWeeklySignal, setUpdateWeeklySignal }) {
     }
 
     const localEmail = localStorage.getItem("fitnessemail");
-    const localPassword = localStorage.getItem("fitnesspassword");
     const header = {
       email: localEmail,
-      password: localPassword,
     };
 
     const getData = {

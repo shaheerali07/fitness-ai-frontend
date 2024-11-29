@@ -40,10 +40,8 @@ function FitnessPlan({ planData, setPlanData }) {
     }
     setLoader(true);
     const localEmail = localStorage.getItem("fitnessemail");
-    const localPassword = localStorage.getItem("fitnesspassword");
     const header = {
       email: localEmail,
-      password: localPassword,
     };
 
     const updateData = {
@@ -77,7 +75,6 @@ function FitnessPlan({ planData, setPlanData }) {
       // Define the API endpoint
       const url = "/exercise/updateexercise";
       const email = localStorage.getItem("fitnessemail");
-      const password = localStorage.getItem("fitnesspassword");
 
       // Construct the request body
       const requestBody = {
@@ -88,7 +85,6 @@ function FitnessPlan({ planData, setPlanData }) {
         seconds: counterDetails.seconds,
         counter: counterDetails.counter,
         email: email,
-        password: password,
       };
 
       // Make the API call

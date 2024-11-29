@@ -1,5 +1,5 @@
 // File: src/components/LoginScreen.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import PuffLoader from "react-spinners/PuffLoader";
@@ -29,7 +29,6 @@ const LoginScreen = () => {
         // First log in the user, then navigate
         await loginUser({
           email: data.email,
-          password: data.password,
           name: newData.name,
           token: newData.token,
           id: newData.id,
@@ -68,11 +67,11 @@ const LoginScreen = () => {
       <div className="flex-1 flex flex-col justify-center items-center p-10">
         <h2 className="text-3xl font-bold mb-6">Welcome Back!</h2>
         <p className="mb-6">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <a href="/signup" className="text-blue-500 font-medium">
             Create a new account
           </a>
-          , it's FREE! Takes less than a minute.
+          , it&apos;s FREE! Takes less than a minute.
         </p>
 
         {/* Form */}

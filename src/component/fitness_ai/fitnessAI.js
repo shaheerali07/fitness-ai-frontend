@@ -187,7 +187,6 @@ function FitnessAIChatbot() {
   };
   function generatePayloads(jsonData, selectedWeek) {
     const email = localStorage.getItem("fitnessemail");
-    const password = localStorage.getItem("fitnesspassword");
     const currentDate = new Date();
 
     // Function to get the start date of a week
@@ -230,7 +229,6 @@ function FitnessAIChatbot() {
       return {
         header: {
           email: email,
-          password: password,
         },
         updateData: {
           year: date.getFullYear(),
@@ -285,7 +283,6 @@ function FitnessAIChatbot() {
 
   function generateExercisePayloads(jsonData, selectedWeek) {
     const email = localStorage.getItem("fitnessemail");
-    const password = localStorage.getItem("fitnesspassword");
     const currentDate = new Date();
 
     // Function to get the start date of a specific week
@@ -312,7 +309,6 @@ function FitnessAIChatbot() {
       return {
         header: {
           email: email,
-          password: password,
           shouldDelteLogs: true,
         },
         updateData: {

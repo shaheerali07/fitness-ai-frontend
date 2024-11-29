@@ -375,7 +375,6 @@ function DietGoal({ dietCal, updateWeeklySignal }) {
 
   //   const header = {
   //     email: localStorage.getItem("fitnessemail"),
-  //     password: localStorage.getItem("fitnesspassword"),
   //   };
   //   const updateData = {
   //     year: year,

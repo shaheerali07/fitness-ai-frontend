@@ -9,7 +9,6 @@ function DietGoalEdit(props) {
   // const setSaveTargetKcal = () => {
   //   const header = {
   //     email: localStorage.getItem("fitnessemail"),
-  //     password: localStorage.getItem("fitnesspassword"),
   //   };
   //   const updateData = {
   //     targetKcal: targetKcal,
@@ -32,7 +31,6 @@ function DietGoalEdit(props) {
   useEffect(() => {
     const header = {
       email: localStorage.getItem("fitnessemail"),
-      password: localStorage.getItem("fitnesspassword"),
     };
     const updateData = {
       targetKcal: props.targetKcal,

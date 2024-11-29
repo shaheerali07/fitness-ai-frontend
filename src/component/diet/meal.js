@@ -376,10 +376,8 @@ function Meal({
     }
 
     const localEmail = localStorage.getItem("fitnessemail");
-    const localPassword = localStorage.getItem("fitnesspassword");
     const header = {
       email: localEmail,
-      password: localPassword,
     };
 
     const updateData = {
@@ -400,10 +398,8 @@ function Meal({
   }, [updateSignal]);
   const handleUpdateMeanStatus = () => {
     const localEmail = localStorage.getItem("fitnessemail");
-    const localPassword = localStorage.getItem("fitnesspassword");
     const header = {
       email: localEmail,
-      password: localPassword,
     };
     const updateData = {
       _id: dietPlan.id,
