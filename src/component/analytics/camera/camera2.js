@@ -40,7 +40,84 @@ function Camera2({
   const [confletiShow, setConfletiShow] = useState(false);
   const [unreal_video_key, setUnrealVideoKey] = useState(0);
   const [unreal_video_url, setUnrealVideoUrl] = useState("");
+  function calculateAccuracy(currentPosition, desiredPosition) {
+    const distance = Math.sqrt(
+      Math.pow(currentPosition.x - desiredPosition.x, 2) +
+        Math.pow(currentPosition.y - desiredPosition.y, 2) +
+        Math.pow(currentPosition.z - desiredPosition.z, 2)
+    );
+    const accuracy = Math.max(0, 100 - distance * 100);
+    return accuracy;
+  }
+  //for testing purpose
+  // const onResults = useCallback(
+  //   (results) => {
+  //     const canvasElement = canvasRef.current;
+  //     const webcamElement = webcamRef.current.video;
+  //     const canvasCtx = canvasElement?.getContext("2d");
 
+  //     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+  //     canvasCtx.drawImage(
+  //       webcamElement,
+  //       0,
+  //       0,
+  //       canvasElement.width,
+  //       canvasElement.height
+  //     );
+
+  //     if (results.poseLandmarks) {
+  //       drawConnectors(
+  //         canvasCtx,
+  //         results.poseLandmarks,
+  //         mediapipePose.POSE_CONNECTIONS,
+  //         { color: "aqua", lineWidth: 1.5 }
+  //       );
+
+  //       drawLandmarks(canvasCtx, results.poseLandmarks, {
+  //         color: "gray",
+  //         lineWidth: 0.1,
+  //         fillColor: "aqua",
+  //         radius: "1",
+  //       });
+  //     }
+
+  //     const landmark = results.poseLandmarks;
+  //     if (landmark) {
+  //       // Simplified logic for "hi" gesture detection
+  //       const rightWrist = landmark[16];
+  //       const rightElbow = landmark[14];
+  //       const rightShoulder = landmark[12];
+
+  //       if (
+  //         rightWrist &&
+  //         rightElbow &&
+  //         rightShoulder &&
+  //         rightWrist.y < rightElbow.y &&
+  //         rightElbow.y < rightShoulder.y &&
+  //         rightWrist.x > rightElbow.x
+  //       ) {
+  //         const currentPosition = rightWrist; // Use the actual landmark position
+  //         const desiredPosition = { x: 0.5, y: 0.5, z: 0 }; // Example desired position
+
+  //         setCalcResult({
+  //           accuracy: calculateAccuracy(currentPosition, desiredPosition),
+  //           counter: 1,
+  //           state: "hi",
+  //         });
+
+  //         setTipSpeaker("Hi gesture detected successfully! Test passed.");
+  //         setTipColor("text-[#4caf50]"); // Green for success
+  //         setConfletiShow(true);
+  //       } else {
+  //         setTipSpeaker("Raise your right hand for the test.");
+  //         setTipColor("text-[red]"); // Red for error
+  //         setConfletiShow(false);
+  //       }
+  //     }
+  //   },
+  //   [setCalcResult, setTipSpeaker, setTipColor, setConfletiShow]
+  // );
   const onResults = useCallback(
     (results) => {
       const canvasElement = canvasRef.current;
@@ -109,7 +186,6 @@ function Camera2({
           setCalcResult(Analysis_exercise(new_calc_data));
         } else {
           setTipSpeaker("Your entire body must be in camera");
-          setTipColor("text-[red]");
         }
       }
     },
@@ -242,14 +318,14 @@ function Camera2({
         setTipColor("text-[red]"); // Red color for critical issues
         break;
 
-      case accuracy >= 50 && accuracy < 75:
-        message =
-          "Your form needs attention. Try adjusting your posture for better results.";
-        showConfetti = false;
-        setTipColor("text-[#ff9800]"); // Orange color for significant deviations
-        break;
+      // case accuracy >= 50 && accuracy < 75:
+      //   message =
+      //     "Your form needs attention. Try adjusting your posture for better results.";
+      //   showConfetti = false;
+      //   setTipColor("text-[#ff9800]"); // Orange color for significant deviations
+      //   break;
 
-      case accuracy >= 75 && accuracy < 90:
+      case accuracy >= 50 && accuracy < 90:
         message = "Almost there! Slight adjustment needed to improve form.";
         showConfetti = false;
         setTipColor("text-[#ffc107]"); // Yellow color for minor deviations
@@ -331,7 +407,7 @@ function Camera2({
         </video>
 
         <div className="relative w-[90vw] h-[25vw] mt-[2vw] ">
-          <p className={`${tipColor} `}> {tipSpeaker}</p>
+          <p className={`${tipColor} text-[18px]`}> {tipSpeaker}</p>
           <div className="relative mt-[1%] w-[100%] h-[100%] bg-black">
             <div className="w-[10%] h-[100%] bg-[red]">
               {iswebcamEnable && (
@@ -419,7 +495,7 @@ function Camera2({
 
           <div className="flex justify-between items-center w-[100%] h-[30%] mt-[3%]">
             <p className="text-[#5534A5] mr-[10%] ml-[10%]">
-              {accuracy + "  %"}
+              {accuracy.toFixed(0) + "  %"}
             </p>
             <p className="text-[#5534A5] mr-[10%] ml-[10%]">
               {counter + "  times"}
