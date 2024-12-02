@@ -78,10 +78,35 @@ export const across_chest_shoulder_stretch = (calc_data) => {
   }
 
   const new_accuracy = Number(accuracy.toFixed(decimal_point));
+  // Injury risk thresholds
+  const thresholds = {
+    rightShoulder: { x: 0.5, y: 0.5 },
+    rightElbow: { x: 0.6, y: 0.6 },
+    rightWrist: { x: 0.7, y: 0.7 },
+  };
+
+  const injuryRisk = [
+    { name: "rightShoulder", index: landmark3 },
+    { name: "rightElbow", index: landmark2 },
+    { name: "rightWrist", index: landmark1 },
+  ].some(({ name, index }) => {
+    const diffX = Math.abs(
+      pose_data.poseLandmarks[index].x - thresholds[name].x
+    );
+    const diffY = Math.abs(
+      pose_data.poseLandmarks[index].y - thresholds[name].y
+    );
+    // Log the differences for debugging
+    // console.log(`Landmark: ${name}, diffX: ${diffX}, diffY: ${diffY}`);
+
+    // Adjust threshold margins for a more forgiving check
+    return diffX > 0.3 || diffY > 0.3;
+  });
   return {
     accuracy: new_accuracy,
     counter: counter,
     state: state_change_exercise,
+    injuryRisk,
   };
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

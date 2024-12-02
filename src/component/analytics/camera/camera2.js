@@ -1,6 +1,6 @@
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import * as mediapipePose from "@mediapipe/pose";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Confetti from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
 import Webcam from "react-webcam";
@@ -12,7 +12,6 @@ let prev_accuracy = 0;
 function Camera2({
   setStateResultData,
   stateResultData,
-  exerciseResult,
   setExerciseResult,
   userPose,
 }) {
@@ -22,17 +21,18 @@ function Camera2({
   const webcamRef = useRef(null);
   const { width, height } = useWindowSize();
   const [accuracy, setAccuracy] = useState(0);
+  // const [injuryRisk, setInjuryRisk] = useState(false);
   const [counter, setCounter] = useState(0);
   const [timeTrack, setTimeTrack] = useState(0);
   const [sumAccuracy, setSumAccuracy] = useState(0);
-
+  const [tipColor, setTipColor] = useState("text-[#ffc107]");
   const [cambtn_classname, setCamBtnClassName] = useState("btn_camera");
-  const [cambtnsvg_classname, setCamBtnSVGClassName] = useState("svg_css");
   const [tipSpeaker, setTipSpeaker] = useState("");
   const [calc_result, setCalcResult] = useState({
     accuracy: "",
     counter: "",
     state: false,
+    injuryRisk: false,
   });
 
   const [state_change_exercise, setState_Change_Exercise] = useState(false);
@@ -57,7 +57,7 @@ function Camera2({
         0,
         0,
         canvasElement.width,
-        canvasElement.height,
+        canvasElement.height
       );
 
       if (results.poseLandmarks) {
@@ -65,7 +65,7 @@ function Camera2({
           canvasCtx,
           results.poseLandmarks,
           mediapipePose.POSE_CONNECTIONS,
-          { color: "aqua", lineWidth: 1.5 },
+          { color: "aqua", lineWidth: 1.5 }
         );
 
         drawLandmarks(
@@ -77,12 +77,15 @@ function Camera2({
             lineWidth: 0.1,
             fillColor: "aqua",
             radius: "1",
-          },
+          }
         );
       }
 
       const landmark = results.poseLandmarks;
       if (landmark) {
+        // let state_pose = landmark.every(
+        //   ({ x, y }) => x >= 0 && x <= 1 && y >= 0 && y <= 1
+        // );
         let state_pose = true;
         for (let i = 0; i < 33; i++) {
           if (
@@ -96,7 +99,7 @@ function Camera2({
         }
 
         if (state_pose === true) {
-          setTipSpeaker("Good now you can start exercise");
+          // setTipSpeaker("Please correct your posture to avoid injury");
           const new_calc_data = {
             pose_data: results,
             kind_exercise: stateResultData.kind_exercise,
@@ -106,10 +109,11 @@ function Camera2({
           setCalcResult(Analysis_exercise(new_calc_data));
         } else {
           setTipSpeaker("Your entire body must be in camera");
+          setTipColor("text-[red]");
         }
       }
     },
-    [stateResultData.kind_exercise, state_change_exercise],
+    [stateResultData.kind_exercise, state_change_exercise]
   );
 
   useEffect(() => {
@@ -146,7 +150,12 @@ function Camera2({
         }
       };
     } else if (stateResultData.btnStateStart === false) {
-      setTipSpeaker("Let's start Exercise!");
+      setTipSpeaker(
+        iswebcamEnable
+          ? "Let's start Exercise!"
+          : "Please enable camera to start exercise"
+      );
+      setTipColor("text-[#ffc107]");
       const currentDay = new Date();
       // const averageAccuracy = sumAccuracy / counter;
       const averageAccuracy = accuracy;
@@ -204,6 +213,7 @@ function Camera2({
     if (max_accuracy < prev_accuracy) {
       max_accuracy = prev_accuracy;
     }
+    // setInjuryRisk(calc_result?.injuryRisk || false);
     setAccuracy(calc_result?.accuracy || 0);
     setCounter(calc_result?.counter || 0);
   }, [calc_result]);
@@ -211,18 +221,60 @@ function Camera2({
   useEffect(() => {
     const newAccuracy = sumAccuracy + max_accuracy;
     setSumAccuracy(newAccuracy);
-    if (max_accuracy > 90) {
-      setConfletiShow(true);
-      setTipSpeaker("Very good, keep it like this");
-    } else if (max_accuracy < 1) {
-      setConfletiShow(false);
-      setTipSpeaker("Let's Start Exercise");
-    } else {
-      setConfletiShow(false);
-      setTipSpeaker("Please, more correctly");
+
+    let message = "";
+    let showConfetti = false;
+
+    // Determine the message and confetti status based on accuracy
+    switch (true) {
+      case accuracy === 0:
+        message = iswebcamEnable
+          ? "Let's start Exercise!"
+          : "Please enable camera to start exercise";
+        showConfetti = false;
+        setTipColor("text-[#ffc107]"); // Yellow color for starting
+        break;
+
+      case accuracy < 50:
+        message =
+          "Incorrect form detected! Please stop and adjust your position to avoid injury";
+        showConfetti = false;
+        setTipColor("text-[red]"); // Red color for critical issues
+        break;
+
+      case accuracy >= 50 && accuracy < 75:
+        message =
+          "Your form needs attention. Try adjusting your posture for better results.";
+        showConfetti = false;
+        setTipColor("text-[#ff9800]"); // Orange color for significant deviations
+        break;
+
+      case accuracy >= 75 && accuracy < 90:
+        message = "Almost there! Slight adjustment needed to improve form.";
+        showConfetti = false;
+        setTipColor("text-[#ffc107]"); // Yellow color for minor deviations
+        break;
+
+      case accuracy >= 90:
+        message = "Excellent, keep it up!";
+        showConfetti = true;
+        setTipColor("text-[#4caf50]"); // Green color for ideal zone
+        break;
+
+      default:
+        message = "Please, more correctly";
+        showConfetti = false;
+        setTipColor("text-[#ffc107]");
+        break;
     }
+
+    // Update state with the computed message and confetti status
+    setConfletiShow(showConfetti);
+    setTipSpeaker(message);
+
+    // Reset max accuracy after processing
     max_accuracy = 0;
-  }, [counter, max_accuracy, sumAccuracy]);
+  }, [counter, max_accuracy, sumAccuracy, iswebcamEnable, accuracy]);
 
   useEffect(() => {
     if (!iswebcamEnable || stateResultData.btnStateStart) {
@@ -242,7 +294,7 @@ function Camera2({
           0,
           0,
           canvasElement.width,
-          canvasElement.height,
+          canvasElement.height
         );
       }
     }, 50);
@@ -279,7 +331,7 @@ function Camera2({
         </video>
 
         <div className="relative w-[90vw] h-[25vw] mt-[2vw] ">
-          <p className="text-[red]"> {tipSpeaker}</p>
+          <p className={`${tipColor} `}> {tipSpeaker}</p>
           <div className="relative mt-[1%] w-[100%] h-[100%] bg-black">
             <div className="w-[10%] h-[100%] bg-[red]">
               {iswebcamEnable && (
@@ -321,11 +373,9 @@ function Camera2({
                   await navigator.mediaDevices.getUserMedia({ video: true });
                   if (cambtn_classname === "btn_camera") {
                     setCamBtnClassName("btn_camera_active");
-                    setCamBtnSVGClassName("svg_css_active");
                     setWebCamEnable(true);
                   } else {
                     setCamBtnClassName("btn_camera");
-                    setCamBtnSVGClassName("svg_css");
                     setWebCamEnable(false);
                   }
                 } catch (err) {
