@@ -40,15 +40,15 @@ function Camera2({
   const [confletiShow, setConfletiShow] = useState(false);
   const [unreal_video_key, setUnrealVideoKey] = useState(0);
   const [unreal_video_url, setUnrealVideoUrl] = useState("");
-  function calculateAccuracy(currentPosition, desiredPosition) {
-    const distance = Math.sqrt(
-      Math.pow(currentPosition.x - desiredPosition.x, 2) +
-        Math.pow(currentPosition.y - desiredPosition.y, 2) +
-        Math.pow(currentPosition.z - desiredPosition.z, 2)
-    );
-    const accuracy = Math.max(0, 100 - distance * 100);
-    return accuracy;
-  }
+  // function calculateAccuracy(currentPosition, desiredPosition) {
+  //   const distance = Math.sqrt(
+  //     Math.pow(currentPosition.x - desiredPosition.x, 2) +
+  //       Math.pow(currentPosition.y - desiredPosition.y, 2) +
+  //       Math.pow(currentPosition.z - desiredPosition.z, 2)
+  //   );
+  //   const accuracy = Math.max(0, 100 - distance * 100);
+  //   return accuracy;
+  // }
   //for testing purpose
   // const onResults = useCallback(
   //   (results) => {
@@ -163,30 +163,30 @@ function Camera2({
         // let state_pose = landmark.every(
         //   ({ x, y }) => x >= 0 && x <= 1 && y >= 0 && y <= 1
         // );
-        let state_pose = true;
-        for (let i = 0; i < 33; i++) {
-          if (
-            landmark[i].x > 1 ||
-            landmark[i].x < 0 ||
-            landmark[i].y > 1 ||
-            landmark[i].y < 0
-          ) {
-            state_pose = false;
-          }
-        }
+        // let state_pose = true;
+        // for (let i = 0; i < 33; i++) {
+        //   if (
+        //     landmark[i].x > 1 ||
+        //     landmark[i].x < 0 ||
+        //     landmark[i].y > 1 ||
+        //     landmark[i].y < 0
+        //   ) {
+        //     state_pose = false;
+        //   }
+        // }
 
-        if (state_pose === true) {
-          // setTipSpeaker("Please correct your posture to avoid injury");
-          const new_calc_data = {
-            pose_data: results,
-            kind_exercise: stateResultData.kind_exercise,
-            state_change_exercise: state_change_exercise,
-          };
+        // if (state_pose === true) {
+        // setTipSpeaker("Please correct your posture to avoid injury");
+        const new_calc_data = {
+          pose_data: results,
+          kind_exercise: stateResultData.kind_exercise,
+          state_change_exercise: state_change_exercise,
+        };
 
-          setCalcResult(Analysis_exercise(new_calc_data));
-        } else {
-          setTipSpeaker("Your entire body must be in camera");
-        }
+        setCalcResult(Analysis_exercise(new_calc_data));
+        // } else {
+        //   setTipSpeaker("Your entire body must be in camera");
+        // }
       }
     },
     [stateResultData.kind_exercise, state_change_exercise]

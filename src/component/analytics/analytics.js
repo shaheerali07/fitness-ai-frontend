@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
-import Camera2 from "./camera/camera2";
 // import Camera from "./camera/camera";
 import { ExerciseContext } from "../../store/state.provider";
+import PoseDetection from "../fitness_ai/poseDetection";
 import Result from "./result/result";
 
 function Analytics() {
@@ -33,13 +33,20 @@ function Analytics() {
 
   return (
     <div className="flex flex-col xl:flex-row justify-start items-center   w-[100%] h-[100%] sm:h-[150%] md:h-[170%] xl:h-[80%]">
-      <Camera2
+      {/* <Camera2
         setStateResultData={setStateResultData}
         stateResultData={stateResultData}
         exerciseResult={exerciseResult}
         setExerciseResult={setExerciseResult}
         userPose={userPose}
-      ></Camera2>
+      ></Camera2> */}
+      <PoseDetection
+        setStateResultData={setStateResultData}
+        stateResultData={stateResultData}
+        exerciseResult={exerciseResult}
+        setExerciseResult={setExerciseResult}
+        userPose={userPose}
+      ></PoseDetection>
       <Result
         setStateResultData={setStateResultData}
         stateResultData={stateResultData}

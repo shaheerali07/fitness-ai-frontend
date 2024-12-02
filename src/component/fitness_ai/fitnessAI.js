@@ -623,13 +623,13 @@ function FitnessAIChatbot() {
         </div>
       )}
       <div className="flex flex-col h-[calc(100vh-150px)] rounded-lg bg-gray-100">
-        <div className="flex items-center px-4 py-3 rounded-lg bg-gray-200">
+        <div className="flex items-center px-4 py-[10px] rounded-lg bg-gray-200">
           <img
             src="Fitness AI_active.png"
             alt="ai Avatar"
-            className=" h-10 w-10"
+            className=" h-8 w-8"
           />
-          <div className="ml-4 text-lg text-black font-semibold">
+          <div className="ml-4 text-[17px] text-black font-semibold">
             Fitness AI
           </div>
         </div>
