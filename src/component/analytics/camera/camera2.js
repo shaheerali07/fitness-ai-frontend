@@ -163,30 +163,30 @@ function Camera2({
         // let state_pose = landmark.every(
         //   ({ x, y }) => x >= 0 && x <= 1 && y >= 0 && y <= 1
         // );
-        // let state_pose = true;
-        // for (let i = 0; i < 33; i++) {
-        //   if (
-        //     landmark[i].x > 1 ||
-        //     landmark[i].x < 0 ||
-        //     landmark[i].y > 1 ||
-        //     landmark[i].y < 0
-        //   ) {
-        //     state_pose = false;
-        //   }
-        // }
+        let state_pose = true;
+        for (let i = 0; i < 33; i++) {
+          if (
+            landmark[i].x > 1 ||
+            landmark[i].x < 0 ||
+            landmark[i].y > 1 ||
+            landmark[i].y < 0
+          ) {
+            state_pose = false;
+          }
+        }
 
-        // if (state_pose === true) {
-        // setTipSpeaker("Please correct your posture to avoid injury");
-        const new_calc_data = {
-          pose_data: results,
-          kind_exercise: stateResultData.kind_exercise,
-          state_change_exercise: state_change_exercise,
-        };
+        if (state_pose === true) {
+          // setTipSpeaker("Please correct your posture to avoid injury");
+          const new_calc_data = {
+            pose_data: results,
+            kind_exercise: stateResultData.kind_exercise,
+            state_change_exercise: state_change_exercise,
+          };
 
-        setCalcResult(Analysis_exercise(new_calc_data));
-        // } else {
-        //   setTipSpeaker("Your entire body must be in camera");
-        // }
+          setCalcResult(Analysis_exercise(new_calc_data));
+        } else {
+          setTipSpeaker("Your entire body must be in camera");
+        }
       }
     },
     [stateResultData.kind_exercise, state_change_exercise]
@@ -353,10 +353,14 @@ function Camera2({
   }, [counter, max_accuracy, sumAccuracy, iswebcamEnable, accuracy]);
 
   useEffect(() => {
-    if (!iswebcamEnable || stateResultData.btnStateStart) {
+    if (
+      !iswebcamEnable ||
+      (stateResultData.btnStateStart && canvasRef.current)
+    ) {
       const canvasElement = canvasRef.current;
       const canvasCtx = canvasElement?.getContext("2d");
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx &&
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
       return;
     }
     const interval = setInterval(() => {
@@ -409,22 +413,24 @@ function Camera2({
         <div className="relative w-[90vw] h-[25vw] mt-[2vw] ">
           <p className={`${tipColor} text-[18px]`}> {tipSpeaker}</p>
           <div className="relative mt-[1%] w-[100%] h-[100%] bg-black">
-            <div className="w-[10%] h-[100%] bg-[red]">
+            <div className="w-[10%] h-[100%] ">
               {iswebcamEnable && (
-                <Webcam
-                  className=""
-                  audio={false}
-                  ref={webcamRef}
-                  screenshotFormat="image/jpeg"
-                />
+                <>
+                  <Webcam
+                    className=""
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                  />
+                  <canvas
+                    ref={canvasRef}
+                    className="absolute top-0 left-0 bg-black w-[100%]"
+                    width="770"
+                    height="480"
+                  ></canvas>
+                </>
               )}
             </div>
-            <canvas
-              ref={canvasRef}
-              className="absolute top-0 left-0 bg-black w-[100%]"
-              width="770"
-              height="480"
-            ></canvas>
           </div>
 
           <div className="absolute top-0 left-0 mt-[10%] w-[10%] h-[100%]">
@@ -474,7 +480,7 @@ function Camera2({
             >
               <svg
                 className={`${
-                  iswebcamEnable === true ? "fill-[red]" : "fill-[white]"
+                  iswebcamEnable === true ? "fill-[red]" : "fill-[black]"
                 } duration-500`}
                 fill="currentColor"
                 viewBox="0 0 16 16"

@@ -97,7 +97,7 @@ export const across_chest_shoulder_stretch = (calc_data) => {
       pose_data.poseLandmarks[index].y - thresholds[name].y
     );
     // Log the differences for debugging
-    // console.log(`Landmark: ${name}, diffX: ${diffX}, diffY: ${diffY}`);
+    console.log(`Landmark: ${name}, diffX: ${diffX}, diffY: ${diffY}`);
 
     // Adjust threshold margins for a more forgiving check
     return diffX > 0.3 || diffY > 0.3;
